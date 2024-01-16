@@ -1,6 +1,5 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import MinituraFilme from "@/components/paginas/populares/carrossel/MinituraFilme.vue";
 </script>
 
 <template>
@@ -8,6 +7,7 @@ import TheWelcome from './components/TheWelcome.vue'
   </header>
 
   <main>
+    <minitura-filme/>
   </main>
 </template>
 
