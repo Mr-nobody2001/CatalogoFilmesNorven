@@ -1,5 +1,5 @@
 <script setup>
-import MiniaturaFilme from "@/components/paginas/populares/carrossel/MiniaturaFilme.vue";
+import Populares from "@/components/paginas/populares/Populares.vue";
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import MiniaturaFilme from "@/components/paginas/populares/carrossel/MiniaturaFi
   </header>
 
   <main>
-    <miniatura-filme/>
+    <Populares/>
   </main>
 </template>
 

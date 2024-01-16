@@ -1,6 +1,20 @@
 <script>
 export default {
-  name: "MiniaturaFilme"
+  name: "MiniaturaFilme",
+  props: {
+    url: String,
+    titulo: String,
+    posicao: Number,
+  },
+  computed: {
+    montarUrl() {
+      console.log(this.url)
+      return `http://image.tmdb.org/t/p/w342/${this.url}`
+    },
+    calcularPosicao() {
+      return `${this.posicao + 1}°`;
+    }
+  }
 }
 </script>
 
@@ -8,23 +22,21 @@ export default {
   <div class="miniatura-filme">
     <v-card
         class="mx-auto rounded-0"
-
-
-        width="200"
-
-
-        height="200"
-        image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+        width="185"
+        height="278"
+        :image="montarUrl"
+        :title="calcularPosicao"
         theme="dark"
     ></v-card>
 
-    <p class="mt-3">Imagem</p>
+    <p class="ma-3">{{ titulo }}</p>
   </div>
 </template>
 
 <style scoped>
- .miniatura-filme {
-   display: inline-block;
-   color: var(--branco);
- }
+.miniatura-filme {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--branco);
+}
 </style>
