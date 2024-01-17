@@ -1,5 +1,5 @@
 <script>
-import Carrossel from "@/components/paginas/populares/carrossel/Carrossel.vue";
+import Carrossel from "@/components/carrossel/Carrossel.vue";
 
 export default {
   name: "Populares",

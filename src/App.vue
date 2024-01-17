@@ -1,5 +1,6 @@
 <script setup>
-import Populares from "@/components/paginas/populares/Populares.vue";
+import Detalhamento from "@/components/paginas/detalhamento/Detalhamento.vue";
+import Pesquisa from "@/components/paginas/pesquisa/Pesquisa.vue";
 </script>
 
 <template>
@@ -7,7 +8,7 @@ import Populares from "@/components/paginas/populares/Populares.vue";
   </header>
 
   <main>
-    <Populares/>
+    <Pesquisa/>
   </main>
 </template>
 
