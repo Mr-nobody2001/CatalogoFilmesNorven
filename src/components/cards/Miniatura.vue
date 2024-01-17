@@ -9,29 +9,31 @@ export default {
     montarUrl() {
       return `http://image.tmdb.org/t/p/w342/${this.url}`
     },
+    truncarString() {
+      if (this.titulo.length > 28) {
+        return this.titulo.slice(0, 28) + '...';
+      }
+      return this.titulo;
+    }
   }
 }
 </script>
 
 <template>
-  <v-card
-      class="miniatura mx-auto"
-      width="185"
-      height="278"
-      :image="montarUrl"
-      theme="dark"
-  ></v-card>
+  <div class="miniatura">
+    <v-card width="185"
+        height="278"
+        :image="montarUrl"
+        theme="dark"
+        hover
+    ></v-card>
+
+    <p class="mt-3">{{ truncarString }}</p>
+  </div>
 </template>
 
 <style scoped>
 .miniatura {
-  display: inline-block;
   font-size: 0.8rem;
-  color: var(--branco);
-  background-color: darkblue;
-}
-
-.miniatura:hover {
-  cursor: pointer;
 }
 </style>

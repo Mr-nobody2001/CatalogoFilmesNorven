@@ -3,7 +3,12 @@ import instanciaAxios from "@/components/service/CriarInstanciaAxios.js";
 
 export const pesquisarFilmesPopulares = async () => {
     try {
-        let response = await instanciaAxios().get('/3/movie/popular?language=pt-BR&page=1');
+        let response = await instanciaAxios().get('/3/movie/popular?&page=1', {
+            params: {
+                language: "pt-BR",
+                page: 1,
+            }
+        });
 
         return response.data;
     } catch (error) {
@@ -18,10 +23,9 @@ export const pesquisarFilmesPorNome = async (titulo, pagina = 1) => {
                 query: titulo,
                 page: pagina,
                 sort_by: "popularity.desc",
+                language: "pt-BR",
             }
         });
-
-        console.log(response)
 
         return response.data;
     } catch (error) {
