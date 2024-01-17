@@ -4,11 +4,9 @@ export default {
   props: {
     url: String,
     titulo: String,
-    posicao: Number,
   },
   computed: {
     montarUrl() {
-      console.log(this.url)
       return `http://image.tmdb.org/t/p/w342/${this.url}`
     },
   }
@@ -17,7 +15,7 @@ export default {
 
 <template>
   <v-card
-      class="miniatura mx-auto rounded-0"
+      class="miniatura mx-auto"
       width="185"
       height="278"
       :image="montarUrl"

@@ -22,7 +22,8 @@ export default {
 
     <Slide v-for="(filme, index) in filmes" :key="filme.id">
       <div class="carousel__item">
-        <Miniatura :url="filme.poster_path" :titulo="filme.title" :posicao="index"/>
+        <Miniatura :url="filme.poster_path"
+                   :titulo="filme.title"/>
       </div>
     </Slide>
 

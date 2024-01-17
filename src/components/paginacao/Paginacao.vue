@@ -6,6 +6,14 @@ export default {
       page: 1,
     }
   },
+  props: {
+    length: Number,
+  },
+  methods: {
+    requisicaoTrocarPagina() {
+      this.$emit('trocar-pagina', this.page);
+    },
+  },
 }
 </script>
 
@@ -17,7 +25,8 @@ export default {
           <v-pagination
               v-model="page"
               class="my-4"
-              :length="15"
+              :length
+              @click="requisicaoTrocarPagina"
           ></v-pagination>
         </v-container>
       </v-col>

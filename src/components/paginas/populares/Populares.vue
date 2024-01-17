@@ -1,7 +1,6 @@
 <script>
 import Carrossel from "@/components/carrossel/Carrossel.vue";
 import {pesquisarFilmesPopulares} from "@/components/service/TmdbService.js";
-import {tr} from "vuetify/locale";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 
 export default {
@@ -17,9 +16,9 @@ export default {
     async obterFilmesPopulares() {
       try {
         this.filmes = (await pesquisarFilmesPopulares()).results;
-        this.dadosCarregados = true; // Marca que os dados estão carregados
+        this.dadosCarregados = true;
       } catch (error) {
-        console.error('Erro ao obter filmes populares:', error.message);
+        console.error('Erro ao obter filmes populares: ', error.message);
       }
     }
   },
