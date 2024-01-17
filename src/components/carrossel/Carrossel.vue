@@ -3,32 +3,14 @@ import Miniatura from "@/components/cards/Miniatura.vue";
 import {Carousel, Slide, Navigation} from "vue3-carousel";
 
 import 'vue3-carousel/dist/carousel.css'
+import {pesquisarFilmesPopulares} from "@/components/service/TmdbService.js";
 
 export default {
   name: "Carrossel",
   components: {Slide, Carousel, Navigation, Miniatura},
-  data() {
-    return {
-      filmes: null,
-    }
+  props: {
+    filmes: Array,
   },
-  async mounted() {
-    try {
-      const response = await fetch('https://api.themoviedb.org/3/movie/popular?language=en-US&page=1', {
-        headers: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YTI4Nzg3ZDM5YWVlOTc0M2M2ZDY5ZGM1MzgyYzkyMCIsInN1YiI6IjY1OWZmOWE1YzE0ZmVlMDEyNzZkODJiYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Cn2m5y2JxhK2nFFwguw6oY_i_mmcP953HeIYgI4UMOw'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-      }
-
-      this.filmes = (await response.json()).results;
-    } catch (error) {
-      console.error(`Erro ao buscar os dados: ${error}`);
-    }
-  }
 }
 </script>
 
