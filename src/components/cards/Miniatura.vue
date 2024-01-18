@@ -27,8 +27,7 @@ export default {
         theme="dark"
         hover
     ></v-card>
-
-    <p class="mt-3">{{ truncarString }}</p>
+    <p v-if="titulo" class="ma-3">{{ truncarString }}</p>
   </div>
 </template>
 

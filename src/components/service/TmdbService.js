@@ -24,6 +24,7 @@ export const pesquisarFilmesPorNome = async (titulo, pagina = 1) => {
                 page: pagina,
                 sort_by: "popularity.desc",
                 language: "pt-BR",
+                include_video: "true",
             }
         });
 

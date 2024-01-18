@@ -3,7 +3,6 @@ import Miniatura from "@/components/cards/Miniatura.vue";
 import {Carousel, Slide, Navigation} from "vue3-carousel";
 
 import 'vue3-carousel/dist/carousel.css'
-import {pesquisarFilmesPopulares} from "@/components/service/TmdbService.js";
 
 export default {
   name: "Carrossel",
@@ -11,19 +10,24 @@ export default {
   props: {
     filmes: Array,
   },
+  methods: {
+    alertarTroca({currentSlideIndex}) {
+      this.$emit('alertar-troca', currentSlideIndex);
+    }
+  }
 }
 </script>
 
 <template>
-  <Carousel :itemsToShow="5.95"
+  <Carousel @slide-end="alertarTroca"
+            :itemsToShow="5.95"
             :wrapAround="true"
             :transition="500"
             :autoplay="5000">
 
-    <Slide v-for="(filme, index) in filmes" :key="filme.id">
+    <Slide v-for="(filme) in filmes" :key="filme.id">
       <div class="carousel__item">
-        <Miniatura :url="filme.poster_path"
-                   :titulo="filme.title"/>
+        <Miniatura :url="filme.poster_path"/>
       </div>
     </Slide>
 

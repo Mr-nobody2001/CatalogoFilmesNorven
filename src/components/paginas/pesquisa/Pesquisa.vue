@@ -18,7 +18,7 @@ export default {
     async obterFilmesPorNome(pagina = 1) {
       console.log('ok')
       try {
-        const resposta = await pesquisarFilmesPorNome('batman', pagina);
+        const resposta = await pesquisarFilmesPorNome('minios', pagina);
 
         this.quantidadePaginas = resposta.total_pages;
 

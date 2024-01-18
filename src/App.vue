@@ -8,7 +8,7 @@ import Pesquisa from "@/components/paginas/pesquisa/Pesquisa.vue";
   </header>
 
   <main>
-    <Pesquisa/>
+    <Populares/>
   </main>
 </template>
 
