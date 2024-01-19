@@ -7,23 +7,54 @@ import 'vue3-carousel/dist/carousel.css'
 export default {
   name: "Carrossel",
   components: {Slide, Carousel, Navigation, Miniatura},
+  data() {
+    return {
+      breakpoints: {
+        576: {
+          itemsToShow: 5.95,
+          snapAlign: 'center',
+        },
+        768: {
+          itemsToShow: 7.95,
+          snapAlign: 'center',
+        },
+        992: {
+          itemsToShow: 9.95,
+          snapAlign: 'center',
+        },
+        1200: {
+          itemsToShow: 11.95,
+          snapAlign: 'center',
+        },
+        1400: {
+          itemsToShow: 13.95,
+          snapAlign: 'center',
+        },
+      },
+    }
+  },
   props: {
     filmes: Array,
   },
   methods: {
-    alertarTroca({currentSlideIndex}) {
-      this.$emit('alertar-troca', currentSlideIndex);
-    }
-  }
+    alertarInicioTroca() {
+      this.$emit('alertar-inicio-troca');
+    },
+    alertarFimTroca({currentSlideIndex}) {
+      this.$emit('alertar-fim-troca', currentSlideIndex);
+    },
+  },
 }
 </script>
 
 <template>
-  <Carousel @slide-end="alertarTroca"
-            :itemsToShow="5.95"
+  <Carousel @slide-start="alertarInicioTroca"
+            @slide-end="alertarFimTroca"
+            items-to-show="3.95"
             :wrapAround="true"
             :transition="500"
-            :autoplay="5000">
+            :autoplay="8000"
+            :breakpoints="breakpoints">
 
     <Slide v-for="(filme) in filmes" :key="filme.id">
       <div class="carousel__item">

@@ -7,7 +7,7 @@ export default {
   },
   computed: {
     montarUrl() {
-      return `http://image.tmdb.org/t/p/w342/${this.url}`
+      return `http://image.tmdb.org/t/p/original/${this.url}`
     },
     truncarString() {
       if (this.titulo.length > 28) {
@@ -21,8 +21,8 @@ export default {
 
 <template>
   <div class="miniatura">
-    <v-card width="185"
-        height="278"
+    <v-card width="92"
+        height="150"
         :image="montarUrl"
         theme="dark"
         hover

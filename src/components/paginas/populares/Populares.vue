@@ -2,15 +2,17 @@
 import Carrossel from "@/components/carrossel/Carrossel.vue";
 import {pesquisarFilmesPopulares} from "@/components/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
+import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
 
 export default {
   name: "Populares",
-  components: {IndicadorCarregamento, Carrossel},
+  components: {IndicadorNota, IndicadorCarregamento, Carrossel},
   data() {
     return {
       filmes: null,
-      dadosCarregados: false,
       filmeSelecionado: null,
+      dadosCarregados: false,
+      sliding: false,
     }
   },
   methods: {
@@ -21,44 +23,114 @@ export default {
         console.error('Erro ao obter filmes populares: ', error.message);
       }
     },
+    async inserirPrimeiroFilme() {
+      await this.obterFilmesPopulares();
+      this.filmeSelecionado = this.filmes[0];
+      this.dadosCarregados = true;
+    },
     trocarInformacoesFilme(currentSlideIndex) {
       this.filmeSelecionado = this.filmes[currentSlideIndex];
+      this.sliding = false;
     },
-    montarUrlImagemLogo() {
-      return `http://image.tmdb.org/t/p/w45/${this.filmeSelecionado.poster_path}`
+    startSlideHandle() {
+      this.sliding = true;
     }
   },
+  computed: {
+    formatarOverview() {
+      const overview = this.filmeSelecionado.overview;
+
+      if (overview.length > 200) {
+        return overview.slice(0, 200) + "...";
+      }
+      return overview;
+    },
+    formatarDataLancamento() {
+      return new Date(this.filmeSelecionado.release_date).getFullYear();
+    },
+    prepararUrlBackground() {
+      return `http://image.tmdb.org/t/p/original/${this.filmeSelecionado.backdrop_path}`;
+    },
+    prepararUrlLogo() {
+      return `http://image.tmdb.org/t/p/w300/${this.filmeSelecionado.poster_path}`;
+    },
+  },
   async mounted() {
-    await this.obterFilmesPopulares();
-    this.filmeSelecionado = this.filmes[0];
-    this.dadosCarregados = true;
+    await this.inserirPrimeiroFilme();
   }
 }
 </script>
 
 <template>
-  <section id="populares" class="ajustar-background"
-           style="background-image: url('https://image.tmdb.org/t/p/w1280/jXJxMcVoEuXzym3vFnjqDW4ifo6.jpg')">
-    <div class="d-flex flex-column justify-space-between " v-if="dadosCarregados">
-      <div id="informacoes">
-        <img src="https://image.tmdb.org/t/p/w148/fJY706h5IgKTl24rQeL3w5sq8Ec.png" alt="">
-        {{ filmeSelecionado.overview }}
+  <section id="populares">
+    <div class="d-flex flex-column" v-if="dadosCarregados">
+      <div id="informacoes" class="ajustar-background animate__animated"
+           :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
+           :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
+
+        <div id="informacoes-texto">
+          <div class="rounded-sm">
+            <img class="rounded-sm" :src="prepararUrlLogo" alt="">
+          </div>
+
+          <div class="d-flex flex-column justify-space-between gap">
+            <div>
+              <h1>{{ filmeSelecionado.title }} ({{ formatarDataLancamento }})</h1>
+            </div>
+
+            <div class="d-flex flex-row align-center gap">
+              <IndicadorNota :nota="filmeSelecionado.vote_average"/>
+              <p>Avaliação <br> dos <br> usuários</p>
+            </div>
+
+            <div>
+              <h2>Sinopse</h2>
+              <p>{{ formatarOverview }}</p>
+            </div>
+
+            <div class="d-flex gap">
+              <v-btn class="texto-branco"
+                     size="large"
+                     color="amber"
+                     density="default"
+                     rounded="xl">Detalhes
+              </v-btn>
+              <v-btn class="texto-branco"
+                     size="x-large"
+                     color="amber"
+                     density="compact"
+                     icon="mdi-plus">+
+              </v-btn>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div>
-        <Carrossel @alertar-troca="trocarInformacoesFilme"
+        <Carrossel @alertar-inicio-troca="startSlideHandle"
+                   @alertar-fim-troca="trocarInformacoesFilme"
                    :filmes="filmes"/>
       </div>
     </div>
 
-    <IndicadorCarregamento class="align-self-center" v-else/>
+    <div id="indicador-carregamento" v-else>
+      <IndicadorCarregamento/>
+    </div>
   </section>
 </template>
 
+<style>
+body::-webkit-scrollbar {
+  width: 0;
+}
+</style>
+
 <style scoped>
 #populares {
-  height: 100vh;
-  padding: 20px 0;
+  min-height: 100vh;
+  height: auto;
+  padding: 0 0 30px 0;
+  background-color: var(--preto);
 }
 
 #populares > div {
@@ -67,14 +139,70 @@ export default {
 }
 
 #informacoes {
-  width: 50%;
-  padding: 0 0 0 50px;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 35px;
+  text-shadow: 2px 2px 4px var(--preto);
+}
+
+#informacoes > div {
+  width: 100%;
+  height: 100%;
+  padding: 25px 50px;
+  backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
+  background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
+  linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
+}
+
+#informacoes-texto {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  #informacoes-texto {
+    flex-direction: row;
+  }
+}
+
+#informacoes h1 {
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+
+#informacoes p {
+  width: 100%;
+  font-size: 1.05rem;
+}
+
+@media (min-width: 1200px) {
+  #informacoes p {
+    width: 50%;
+  }
 }
 
 .ajustar-background {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: grayscale(30%);
+}
+
+#indicador-carregamento {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto !important;
+}
+
+.gap {
+  gap: 20px;
+}
+
+.texto-branco {
+  color: var(--branco) !important;
 }
 </style>
