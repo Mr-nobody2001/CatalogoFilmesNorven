@@ -1,7 +1,7 @@
 <script>
 export default {
   name: "Paginacao",
-  data () {
+  data() {
     return {
       page: 1,
     }
@@ -18,22 +18,21 @@ export default {
 </script>
 
 <template>
-  <v-container class="text-center">
-    <v-row justify="center">
-      <v-col cols="8">
-        <v-container class="max-width">
-          <v-pagination
-              v-model="page"
-              class="my-4"
-              :length
-              @click="requisicaoTrocarPagina"
-          ></v-pagination>
-        </v-container>
-      </v-col>
-    </v-row>
+  <v-container id="paginacao" class="max-width">
+    <v-pagination
+        v-model="page"
+        class="my-4"
+        :length
+        :total-visible="7"
+        prev-icon="mdi-menu-left"
+        next-icon="mdi-menu-right"
+        @click="requisicaoTrocarPagina"
+    ></v-pagination>
   </v-container>
 </template>
 
 <style scoped>
-
+ #paginacao {
+   color: var(--branco) !important;
+ }
 </style>

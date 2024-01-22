@@ -43,6 +43,11 @@ export default {
       if (overview.length > 200) {
         return overview.slice(0, 200) + "...";
       }
+
+      if (!overview) {
+        return 'Indisponível'
+      }
+
       return overview;
     },
     formatarDataLancamento() {
@@ -62,18 +67,18 @@ export default {
 </script>
 
 <template>
-  <section id="populares">
+  <section id="populares" class="d-flex flex-column justify-center">
     <div class="d-flex flex-column" v-if="dadosCarregados">
       <div id="informacoes" class="ajustar-background animate__animated"
            :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
            :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
-        <div id="informacoes-texto">
+        <div id="informacoes-imagem-texto">
           <div class="rounded-sm">
-            <img class="rounded-sm" :src="prepararUrlLogo" alt="">
+            <img class="rounded-sm" :src="prepararUrlLogo" :alt="filmeSelecionado.title">
           </div>
 
-          <div class="d-flex flex-column justify-space-between gap">
+          <div class="d-flex flex-column justify-space-between gap" style="width: 100%">
             <div>
               <h1>{{ filmeSelecionado.title }} ({{ formatarDataLancamento }})</h1>
             </div>
@@ -83,7 +88,7 @@ export default {
               <p>Avaliação <br> dos <br> usuários</p>
             </div>
 
-            <div>
+            <div class="d-flex flex-column gap">
               <h2>Sinopse</h2>
               <p>{{ formatarOverview }}</p>
             </div>
@@ -99,14 +104,14 @@ export default {
                      size="x-large"
                      color="amber"
                      density="compact"
-                     icon="mdi-plus">+
+                     icon="mdi-plus">
               </v-btn>
             </div>
           </div>
         </div>
       </div>
 
-      <div>
+      <div id="carrossel">
         <Carrossel @alertar-inicio-troca="startSlideHandle"
                    @alertar-fim-troca="trocarInformacoesFilme"
                    :filmes="filmes"/>
@@ -129,11 +134,11 @@ body::-webkit-scrollbar {
 #populares {
   min-height: 100vh;
   height: auto;
-  padding: 0 0 30px 0;
+  padding: 30px 0 30px 0;
   background-color: var(--preto);
 }
 
-#populares > div {
+#populares > div:first-child {
   height: 100%;
   color: var(--branco);
 }
@@ -154,7 +159,7 @@ body::-webkit-scrollbar {
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
 
-#informacoes-texto {
+#informacoes-imagem-texto {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -163,7 +168,7 @@ body::-webkit-scrollbar {
 }
 
 @media (min-width: 768px) {
-  #informacoes-texto {
+  #informacoes-imagem-texto {
     flex-direction: row;
   }
 }
@@ -184,10 +189,8 @@ body::-webkit-scrollbar {
   }
 }
 
-.ajustar-background {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+#carrossel {
+  height: 100%;
 }
 
 #indicador-carregamento {
@@ -196,6 +199,12 @@ body::-webkit-scrollbar {
   left: 50%;
   transform: translate(-50%, -50%);
   height: auto !important;
+}
+
+.ajustar-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .gap {

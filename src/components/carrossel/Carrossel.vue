@@ -11,23 +11,23 @@ export default {
     return {
       breakpoints: {
         576: {
-          itemsToShow: 5.95,
+          itemsToShow: 2.95,
           snapAlign: 'center',
         },
         768: {
-          itemsToShow: 7.95,
+          itemsToShow: 4.95,
           snapAlign: 'center',
         },
         992: {
-          itemsToShow: 9.95,
+          itemsToShow: 6.95,
           snapAlign: 'center',
         },
         1200: {
-          itemsToShow: 11.95,
+          itemsToShow: 8.95,
           snapAlign: 'center',
         },
         1400: {
-          itemsToShow: 13.95,
+          itemsToShow: 10.95,
           snapAlign: 'center',
         },
       },
@@ -50,7 +50,7 @@ export default {
 <template>
   <Carousel @slide-start="alertarInicioTroca"
             @slide-end="alertarFimTroca"
-            items-to-show="3.95"
+            items-to-show="1"
             :wrapAround="true"
             :transition="500"
             :autoplay="8000"
@@ -58,7 +58,7 @@ export default {
 
     <Slide v-for="(filme) in filmes" :key="filme.id">
       <div class="carousel__item">
-        <Miniatura :url="filme.poster_path"/>
+        <Miniatura :width="154" :height="231" :url="filme.poster_path"/>
       </div>
     </Slide>
 
