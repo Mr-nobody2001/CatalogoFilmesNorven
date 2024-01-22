@@ -31,8 +31,8 @@ export default {
       return `http://image.tmdb.org/t/p/original/${this.url}`
     },
     truncarString() {
-      if (this.titulo.length > 28) {
-        return this.titulo.slice(0, 28) + '...';
+      if (this.titulo.length > 20) {
+        return this.titulo.slice(0, 20) + '...';
       }
       return this.titulo;
     }
@@ -42,7 +42,7 @@ export default {
 
 <template>
   <div class="miniatura">
-    <v-card class="d-flex justify-center"
+    <v-card class="d-flex justify-center rounded-lg"
             :width
             :height
             :image="montarUrl"

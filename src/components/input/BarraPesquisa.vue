@@ -1,20 +1,31 @@
-<script setup>
-
+<script>
+export default {
+  name: "BarraPesquisa",
+  data() {
+    return {
+      pesquisa: null,
+    }
+  },
+  methods: {
+    emitirAvisoPesquisa() {
+      this.$emit('pesquisar', this.pesquisa);
+    }
+  }
+}
 </script>
 
 <template>
   <div id="barra-pesquisa" class="d-flex gap">
-    <input type="text" placeholder="Pesquisar por um filme..."/>
+    <input type="text" v-model="pesquisa" @input="emitirAvisoPesquisa" placeholder="Pesquisar por um filme..."/>
     <i class="bi bi-search"></i>
   </div>
 </template>
 
 <style scoped>
 #barra-pesquisa {
-  width: 50%;
-  padding: 15px 25px;
-  border-radius: 50px;
-  font-size: 1.1rem;
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 10px;
   color: var(--branco) !important;
   background-color: #424242;
 }

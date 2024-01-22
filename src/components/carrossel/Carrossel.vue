@@ -11,23 +11,23 @@ export default {
     return {
       breakpoints: {
         576: {
-          itemsToShow: 5.95,
+          itemsToShow: 1.95,
           snapAlign: 'center',
         },
         768: {
-          itemsToShow: 7.95,
+          itemsToShow: 2.95,
           snapAlign: 'center',
         },
         992: {
-          itemsToShow: 9.95,
+          itemsToShow: 5.95,
           snapAlign: 'center',
         },
         1200: {
-          itemsToShow: 11.95,
+          itemsToShow: 8.95,
           snapAlign: 'center',
         },
         1400: {
-          itemsToShow: 13.95,
+          itemsToShow: 10.95,
           snapAlign: 'center',
         },
       },
@@ -50,7 +50,7 @@ export default {
 <template>
   <Carousel @slide-start="alertarInicioTroca"
             @slide-end="alertarFimTroca"
-            items-to-show="1"
+            :items-to-show="1"
             :wrapAround="true"
             :transition="500"
             :autoplay="8000"

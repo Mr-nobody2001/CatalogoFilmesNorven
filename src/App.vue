@@ -1,19 +1,22 @@
 <script setup>
-import Populares from "@/components/paginas/populares/Populares.vue";
-import Pesquisa from "@/components/paginas/pesquisa/Pesquisa.vue";
+import Populares from "@/views/Populares.vue";
+import Pesquisa from "@/views/Pesquisa.vue";
 import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
 import Menu from "@/components/menu/Menu.vue";
 </script>
 
 <template>
-  <header>
-    <Menu/>
-  </header>
+  <div id="app">
+    <header>
 
-  <main>
-    <Populares/>
-  </main>
+    </header>
+
+    <main>
+      <Pesquisa/>
+    </main>
+  </div>
 </template>
 
 <style scoped>
+
 </style>

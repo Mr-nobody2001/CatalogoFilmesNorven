@@ -68,6 +68,16 @@ export default {
 
 <template>
   <section id="populares" class="d-flex flex-column justify-center">
+    <div id="switch" class="d-flex justify-space-between align-center">
+      <p>Filmes</p>
+      <v-switch class="d-flex justify-center"
+          v-model="model"
+          hide-details
+          inset
+      ></v-switch>
+      <p>Séries</p>
+    </div>
+
     <div class="d-flex flex-column" v-if="dadosCarregados">
       <div id="informacoes" class="ajustar-background animate__animated"
            :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
@@ -134,11 +144,16 @@ body::-webkit-scrollbar {
 #populares {
   min-height: 100vh;
   height: auto;
-  padding: 30px 0 30px 0;
   background-color: var(--preto);
 }
 
-#populares > div:first-child {
+#switch {
+  width: 200px;
+  margin-bottom: 30px;
+  color: var(--branco);
+}
+
+#populares > div:last-child {
   height: 100%;
   color: var(--branco);
 }
@@ -153,7 +168,7 @@ body::-webkit-scrollbar {
 #informacoes > div {
   width: 100%;
   height: 100%;
-  padding: 25px 50px;
+  padding: 0 50px;
   backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));

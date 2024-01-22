@@ -16,7 +16,7 @@ export const pesquisarFilmesPopulares = async () => {
     }
 }
 
-export const pesquisarFilmesPorNome = async (titulo, pagina = 1) => {
+export const pesquisarFilmesPorTitulo = async (titulo, pagina = 1) => {
     try {
         let response = await instanciaAxios().get('3/search/movie', {
             params: {

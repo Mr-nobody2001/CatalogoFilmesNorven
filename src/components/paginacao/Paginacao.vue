@@ -3,11 +3,17 @@ export default {
   name: "Paginacao",
   data() {
     return {
-      page: 1,
+      page: this.pageProp,
     }
   },
   props: {
+    pageProp: Number,
     length: Number,
+  },
+  watch: {
+    pageProp() {
+      this.page = this.pageProp;
+    }
   },
   methods: {
     requisicaoTrocarPagina() {
@@ -32,7 +38,7 @@ export default {
 </template>
 
 <style scoped>
- #paginacao {
-   color: var(--branco) !important;
- }
+#paginacao {
+  color: var(--branco) !important;
+}
 </style>
