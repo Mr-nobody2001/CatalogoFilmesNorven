@@ -53,10 +53,6 @@ export default {
 
 <template>
   <section id="pesquisa" :class="{ centralizar: !gridCarregada}">
-    <div class="d-flex justify-end mb-5" style="color: white">
-      <BarraPesquisa @pesquisar="realizarPesquisaPorNome"/>
-    </div>
-
     <div v-show="paginaCarregada" class="d-flex flex-column">
       <div v-show="gridCarregada" id="grid-pesquisa">
         <Miniatura v-for="filme in filmes"
@@ -84,8 +80,6 @@ export default {
 #pesquisa {
   min-height: 100vh;
   height: auto;
-  background-color: var(--preto);
-  padding: 30px 60px;
 }
 
 #pesquisa > div {
@@ -108,9 +102,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.invisivel {
-  display: none;
 }
 </style>

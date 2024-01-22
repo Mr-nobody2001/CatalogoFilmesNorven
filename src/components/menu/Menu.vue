@@ -1,30 +1,30 @@
 <script setup>
+import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
 </script>
 
 <template>
-  <div id="menu" class="d-flex justify-space-around align-center gap">
-    <div>
-      <ul class="d-flex gap">
-        <li>Filmes</li>
-        <li>Séries</li>
-      </ul>
+  <div id="menu" class="d-flex justify-space-between align-center gap">
+    <div id="switch" class="d-flex justify-space-between align-center gap">
+      <p>Filmes</p>
+      <v-switch class="d-flex justify-center"
+                v-model="model"
+                hide-details
+                inset
+      ></v-switch>
+      <p>Séries</p>
     </div>
+
+    <BarraPesquisa/>
   </div>
 </template>
 
 <style scoped>
 #menu {
   width: 100%;
-  padding: 40px 0;
-  background-color: var(--preto);
   color: var(--branco);
 }
 
-#menu ul {
-  list-style: none;
-}
-
-.gap {
-  gap: 20px;
+#switch {
+  gap: 10px;
 }
 </style>

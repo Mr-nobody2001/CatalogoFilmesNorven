@@ -3,5 +3,9 @@
 
     /* Cores claras */
     --branco: #FFF;
+    --neve: #FFFFFF75;
+
+    /* Cores escuras */
     --preto: #0F0F0F;
+    --cinza-ardosia-escuro: #424242;
 }

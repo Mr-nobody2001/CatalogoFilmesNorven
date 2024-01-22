@@ -11,10 +11,6 @@ export default {
     return {
       breakpoints: {
         576: {
-          itemsToShow: 1.95,
-          snapAlign: 'center',
-        },
-        768: {
           itemsToShow: 2.95,
           snapAlign: 'center',
         },

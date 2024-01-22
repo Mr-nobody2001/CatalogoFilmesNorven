@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <div id="barra-pesquisa" class="d-flex gap">
+  <div id="barra-pesquisa" class="d-flex">
     <input type="text" v-model="pesquisa" @input="emitirAvisoPesquisa" placeholder="Pesquisar por um filme..."/>
     <i class="bi bi-search"></i>
   </div>
@@ -23,11 +23,11 @@ export default {
 
 <style scoped>
 #barra-pesquisa {
-  width: 100%;
+  width: 50%;
   padding: 10px 20px;
   border-radius: 10px;
   color: var(--branco) !important;
-  background-color: #424242;
+  background-color: var(--cinza-ardosia-escuro);
 }
 
 #barra-pesquisa > input {
@@ -37,7 +37,12 @@ export default {
   color: var(--branco) !important;
 }
 
-.gap {
-  gap: 20px;
+#barra-pesquisa i {
+  color: var(--neve);
+}
+
+#barra-pesquisa i:hover {
+  cursor: pointer;
+  color: var(--branco);
 }
 </style>
