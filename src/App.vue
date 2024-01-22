@@ -10,7 +10,7 @@ import Menu from "@/components/menu/Menu.vue";
     </header>
 
     <main>
-      <Pesquisa/>
+      <router-view/>
     </main>
   </div>
 </template>

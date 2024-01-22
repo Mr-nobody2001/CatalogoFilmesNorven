@@ -45,7 +45,8 @@ export default {
     }
   },
   mounted() {
-    this.obterFilmesPorTitulo();
+    console.log(this.$route.params.titulo);
+    this.realizarPesquisaPorNome(this.$route.params.titulo);
     this.paginaCarregada = true;
   }
 }

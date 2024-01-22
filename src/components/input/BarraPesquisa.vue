@@ -7,8 +7,11 @@ export default {
     }
   },
   methods: {
-    emitirAvisoPesquisa() {
-      this.$emit('pesquisar', this.pesquisa);
+    pesquisar() {
+
+      if (this.$route.name !== "pesquisar") {
+        this.$router.push({name: "pesquisa", params: {titulo: this.pesquisa}});
+      }
     }
   }
 }
@@ -16,8 +19,8 @@ export default {
 
 <template>
   <div id="barra-pesquisa" class="d-flex">
-    <input type="text" v-model="pesquisa" @input="emitirAvisoPesquisa" placeholder="Pesquisar por um filme..."/>
-    <i class="bi bi-search"></i>
+    <input type="text" v-model="pesquisa" placeholder="Pesquisar por um filme..."/>
+    <i @click="pesquisar" class="bi bi-search"></i>
   </div>
 </template>
 
@@ -26,6 +29,7 @@ export default {
   width: 50%;
   padding: 10px 20px;
   border-radius: 10px;
+  gap: 15px;
   color: var(--branco) !important;
   background-color: var(--cinza-ardosia-escuro);
 }
