@@ -11,23 +11,23 @@ export default {
     return {
       breakpoints: {
         576: {
-          itemsToShow: 2.95,
+          itemsToShow: 5.95,
           snapAlign: 'center',
         },
         768: {
-          itemsToShow: 4.95,
+          itemsToShow: 7.95,
           snapAlign: 'center',
         },
         992: {
-          itemsToShow: 6.95,
+          itemsToShow: 9.95,
           snapAlign: 'center',
         },
         1200: {
-          itemsToShow: 8.95,
+          itemsToShow: 11.95,
           snapAlign: 'center',
         },
         1400: {
-          itemsToShow: 10.95,
+          itemsToShow: 13.95,
           snapAlign: 'center',
         },
       },
@@ -58,7 +58,7 @@ export default {
 
     <Slide v-for="(filme) in filmes" :key="filme.id">
       <div class="carousel__item">
-        <Miniatura :width="154" :height="231" :url="filme.poster_path"/>
+        <Miniatura :width="114" :height="191" :url="filme.poster_path"/>
       </div>
     </Slide>
 
