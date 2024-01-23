@@ -7,7 +7,7 @@ const About = {template: '<div>About</div>'}
 
 const routes = [
     {path: '/', component: Populares},
-    {path: '/pesquisa/:titulo', name: "pesquisa", component: Pesquisa},
+    {path: '/pesquisa', name: "pesquisa", component: Pesquisa},
 ]
 
 const router = createRouter({

@@ -10,13 +10,27 @@ export default {
   components: {IndicadorCarregamento, Paginacao, Miniatura, BarraPesquisa},
   data() {
     return {
-      filmes: null,
+      filmes: [],
       pagina: 1,
-      pesquisa: null,
       gridCarregada: false,
       quantidadePaginas: 0,
       paginaCarregada: false,
     }
+  },
+  computed: {
+    pesquisa() {
+      return this.$store.getters.pesquisa;
+    },
+    numeroFilmesPositivo() {
+      return this.filmes.length > 0;
+    }
+  },
+  watch: {
+    pesquisa: {
+      handler() {
+        this.realizarPesquisaPorNome(this.pesquisa, 1);
+      },
+    },
   },
   methods: {
     async obterFilmesPorTitulo(titulo, pagina) {
@@ -26,6 +40,7 @@ export default {
         const resposta = await pesquisarFilmesPorTitulo(titulo, pagina);
 
         this.filmes = resposta.results;
+
         this.quantidadePaginas = resposta.total_pages;
         this.pagina = pagina;
         this.gridCarregada = true;
@@ -37,24 +52,19 @@ export default {
       this.obterFilmesPorTitulo(this.pesquisa, pagina)
     },
     realizarPesquisaPorNome(pesquisa) {
-      this.pesquisa = pesquisa;
-
-      if (pesquisa.length > 0) {
-        this.obterFilmesPorTitulo(pesquisa, 1);
-      }
+      this.obterFilmesPorTitulo(pesquisa, 1);
     }
   },
   mounted() {
-    console.log(this.$route.params.titulo);
-    this.realizarPesquisaPorNome(this.$route.params.titulo);
+    this.realizarPesquisaPorNome(this.pesquisa);
     this.paginaCarregada = true;
   }
 }
 </script>
 
 <template>
-  <section id="pesquisa" :class="{ centralizar: !gridCarregada}">
-    <div v-show="paginaCarregada" class="d-flex flex-column">
+  <section id="pesquisa">
+    <div v-show="paginaCarregada" class="d-flex flex-column mt-10">
       <div v-show="gridCarregada" id="grid-pesquisa">
         <Miniatura v-for="filme in filmes"
                    :key="filme.id"
@@ -62,16 +72,21 @@ export default {
                    :titulo="filme.title"/>
       </div>
 
-      <div v-show="!gridCarregada" id="indicador-carregamento" class="align-self-center">
-        <IndicadorCarregamento/>
+      <div v-if="!numeroFilmesPositivo" id="mensagem" class="d-flex flex-column align-center centralizar">
+        <i class="bi bi-database-slash"></i>
+        <p>Nenhum filme encontrado.</p>
       </div>
 
-      <div v-show="gridCarregada">
+      <div v-show="gridCarregada && numeroFilmesPositivo">
         <Paginacao @trocar-pagina="trocarPagina" :pageProp="pagina" :length="quantidadePaginas"/>
+      </div>
+
+      <div v-if="!gridCarregada && numeroFilmesPositivo" class="centralizar">
+        <IndicadorCarregamento/>
       </div>
     </div>
 
-    <div v-if="!paginaCarregada" id="indicador-carregamento">
+    <div v-if="!paginaCarregada" class="centralizar">
       <IndicadorCarregamento/>
     </div>
   </section>
@@ -90,18 +105,29 @@ export default {
 #grid-pesquisa {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  justify-content: start;
-  justify-items: start;
+  justify-content: center;
+  justify-items: center;
   gap: 5px;
+  width: auto !important;
 }
 
-#indicador-carregamento {
-  height: 100%;
+#mensagem > p,
+#mensagem > i {
+  color: var(--branco);
+}
+
+#mensagem > i {
+  font-size: 4rem;
+}
+
+#mensagem > p {
+  font-size: 1.4rem;
 }
 
 .centralizar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
