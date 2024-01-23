@@ -34,6 +34,10 @@ export default {
     },
     startSlideHandle() {
       this.sliding = true;
+    },
+    acessarDetalhamento() {
+      console.log(this.filmeSelecionado.id)
+      this.$router.push({name: 'detalhamento', params: {id: this.filmeSelecionado.id}});
     }
   },
   computed: {
@@ -50,7 +54,7 @@ export default {
 
       return overview;
     },
-    formatarDataLancamento() {
+    formatarAnoLancamento() {
       return new Date(this.filmeSelecionado.release_date).getFullYear();
     },
     prepararUrlBackground() {
@@ -80,7 +84,7 @@ export default {
 
           <div class="d-flex flex-column justify-space-between gap" style="width: 100%">
             <div>
-              <h1>{{ filmeSelecionado.title }} ({{ formatarDataLancamento }})</h1>
+              <h1>{{ filmeSelecionado.title }} ({{ formatarAnoLancamento }})</h1>
             </div>
 
             <div class="d-flex flex-row align-center gap">
@@ -98,8 +102,10 @@ export default {
                      size="large"
                      color="amber"
                      density="default"
-                     rounded="xl">Detalhes
+                     rounded="xl"
+                     @click="acessarDetalhamento">Detalhes
               </v-btn>
+
               <v-btn class="texto-branco"
                      size="x-large"
                      color="amber"

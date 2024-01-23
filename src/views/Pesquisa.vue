@@ -36,6 +36,7 @@ export default {
     async obterFilmesPorTitulo(titulo, pagina) {
       try {
         this.gridCarregada = false;
+        this.filmes = [];
 
         const resposta = await pesquisarFilmesPorTitulo(titulo, pagina);
 
@@ -53,6 +54,9 @@ export default {
     },
     realizarPesquisaPorNome(pesquisa) {
       this.obterFilmesPorTitulo(pesquisa, 1);
+    },
+    acessarDetalhamento(id) {
+      this.$router.push({ name: 'detalhamento', params: { id: id }});
     }
   },
   mounted() {
@@ -69,10 +73,11 @@ export default {
         <Miniatura v-for="filme in filmes"
                    :key="filme.id"
                    :url="filme.poster_path"
-                   :titulo="filme.title"/>
+                   :titulo="filme.title"
+                   @click="acessarDetalhamento(filme.id)"/>
       </div>
 
-      <div v-if="!numeroFilmesPositivo" id="mensagem" class="d-flex flex-column align-center centralizar">
+      <div v-if="gridCarregada && !numeroFilmesPositivo" id="mensagem" class="d-flex flex-column align-center centralizar">
         <i class="bi bi-database-slash"></i>
         <p>Nenhum filme encontrado.</p>
       </div>
@@ -81,7 +86,7 @@ export default {
         <Paginacao @trocar-pagina="trocarPagina" :pageProp="pagina" :length="quantidadePaginas"/>
       </div>
 
-      <div v-if="!gridCarregada && numeroFilmesPositivo" class="centralizar">
+      <div v-if="!gridCarregada && !numeroFilmesPositivo" class="centralizar">
         <IndicadorCarregamento/>
       </div>
     </div>

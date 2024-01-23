@@ -1,6 +1,5 @@
 import instanciaAxios from "@/components/service/CriarInstanciaAxios.js";
 
-
 export const pesquisarFilmesPopulares = async () => {
     try {
         let response = await instanciaAxios().get('/3/movie/popular?&page=1', {
@@ -24,7 +23,20 @@ export const pesquisarFilmesPorTitulo = async (titulo, pagina = 1) => {
                 page: pagina,
                 sort_by: "popularity.desc",
                 language: "pt-BR",
-                include_video: "true",
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Erro na requisição: ', error.message);
+    }
+}
+
+export const pesquisarFilmePorId = async (id) => {
+    try {
+        let response = await instanciaAxios().get(`3/movie/${id}`, {
+            params: {
+                language: "pt-BR",
             }
         });
 

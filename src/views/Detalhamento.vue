@@ -1,10 +1,80 @@
 <script>
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
+import {pesquisarFilmePorId} from "@/components/service/TmdbService.js";
 
 export default {
   name: "Detalhamento",
-  components: {IndicadorNota, IndicadorCarregamento}
+  components: {IndicadorNota, IndicadorCarregamento},
+  data() {
+    return {
+      filme: null,
+      dadosCarregados: false,
+    }
+  },
+  methods: {
+    async obterFilmePorId(id) {
+      try {
+        this.filme = await pesquisarFilmePorId(id);
+      } catch (error) {
+        console.error('Erro ao obter filmes populares: ', error.message);
+      }
+    },
+    async inserirFilme(id) {
+      await this.obterFilmePorId(id);
+      this.dadosCarregados = true;
+      console.log(this.filme)
+    },
+  },
+  computed: {
+    formatarDataLancamento() {
+      const formatoData = new Intl.DateTimeFormat('pt-BR',
+          {day: '2-digit', month: '2-digit', year: 'numeric'});
+
+      return formatoData.format(new Date(this.filme.release_date));
+    },
+    formatarListaGeneros() {
+      let listaGenero = "";
+
+      console.log(this.filme.genres)
+
+      if (this.filme.genres) {
+        let i = 0;
+
+        for (; i > this.filme.genres.length - 1; i++) {
+          listaGenero += this.filme.genres[i].name + ", ";
+        }
+
+        listaGenero += this.filme.genres[++i].name;
+      }
+
+      return listaGenero;
+    },
+    formatarAnoLancamento() {
+      return new Date(this.filme.release_date).getFullYear();
+    },
+    prepararUrlBackground() {
+      return `http://image.tmdb.org/t/p/original/${this.filme.backdrop_path}`;
+    },
+    prepararUrlLogo() {
+      return `http://image.tmdb.org/t/p/w300/${this.filme.poster_path}`;
+    },
+    formatarDuracao() {
+      return `${Math.floor(this.filme.runtime / 60)}h ${this.filme.runtime % 60}m`;
+    },
+    formatarOverview() {
+      const overview = this.filme.overview;
+
+      if (!overview) {
+        return 'Indisponível'
+      }
+
+      return overview;
+    },
+  },
+  async mounted() {
+    await this.inserirFilme(this.$route.params.id);
+  }
 }
 </script>
 
@@ -12,28 +82,39 @@ export default {
   <section id="detalhamento">
     <section id="populares" class="d-flex flex-column justify-center">
       <div class="d-flex flex-column" v-if="dadosCarregados">
-        <div id="informacoes" class="ajustar-background animate__animated"
-             :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
+        <div id="informacoes" class="ajustar-background"
              :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
-          <div id="informacoes-imagem-texto">
+          <div id="informacoes-imagem-texto" class="d-flex justify-space-between">
             <div class="rounded-sm">
-              <img class="rounded-sm" :src="prepararUrlLogo" :alt="filmeSelecionado.title">
+              <img class="rounded-sm" :src="prepararUrlLogo" :alt="filme.title">
             </div>
 
-            <div class="d-flex flex-column justify-space-between gap" style="width: 100%">
-              <div>
-                <h1>{{ filmeSelecionado.title }} ({{ formatarDataLancamento }})</h1>
-              </div>
+            <div class="d-flex justify-space-between gap w-100">
+              <div class="d-flex flex-column justify-space-between gap">
+                <div>
+                  <h1>{{ filme.title }} ({{ formatarAnoLancamento }})</h1>
+                </div>
 
-              <div class="d-flex flex-row align-center gap">
-                <IndicadorNota :nota="filmeSelecionado.vote_average"/>
-                <p>Avaliação <br> dos <br> usuários</p>
-              </div>
+                <div class="d-flex justify-start">
+                  <p>{{ formatarDataLancamento }}</p>
+                  <i class="bi bi-dot"></i>
+                  <p>{{ formatarListaGeneros }}</p>
+                  <i class="bi bi-dot"></i>
+                  <p>{{ formatarDuracao }}</p>
+                </div>
 
-              <div class="d-flex flex-column gap">
-                <h2>Sinopse</h2>
-                <p>{{ formatarOverview }}</p>
+                <div class="d-flex flex-row align-center gap">
+                  <IndicadorNota :nota="filme.vote_average"/>
+                  <p>Avaliação <br> dos <br> usuários</p>
+                </div>
+
+                <div class="d-flex flex-column gap">
+                  <p>{{ filme.tagline }}</p>
+
+                  <h2>Sinopse</h2>
+                  <p>{{ formatarOverview }}</p>
+                </div>
               </div>
 
               <v-btn class="texto-branco"
@@ -76,7 +157,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 0 25px;
-  backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
+  backdrop-filter: blur(5px) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
@@ -87,6 +168,8 @@ export default {
   justify-content: center;
   align-items: center;
   gap: 20px;
+  min-width: 100%;
+  width: 100% !important;
 }
 
 @media (min-width: 768px) {
@@ -101,14 +184,7 @@ export default {
 }
 
 #informacoes p {
-  width: 100%;
   font-size: 1.05rem;
-}
-
-@media (min-width: 1200px) {
-  #informacoes p {
-    width: 50%;
-  }
 }
 
 #indicador-carregamento {
