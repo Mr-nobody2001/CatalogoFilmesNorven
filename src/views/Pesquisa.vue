@@ -1,5 +1,5 @@
 <script>
-import Miniatura from "@/components/cards/Miniatura.vue";
+import MiniaturaFilme from "@/components/cards/MiniaturaFilme.vue";
 import Paginacao from "@/components/paginacao/Paginacao.vue";
 import {pesquisarFilmesPorTitulo} from "@/components/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
@@ -7,7 +7,7 @@ import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
 
 export default {
   name: "Pesquisa",
-  components: {IndicadorCarregamento, Paginacao, Miniatura, BarraPesquisa},
+  components: {IndicadorCarregamento, Paginacao, MiniaturaFilme, BarraPesquisa},
   data() {
     return {
       filmes: [],
@@ -70,7 +70,7 @@ export default {
   <section id="pesquisa">
     <div v-show="paginaCarregada" class="d-flex flex-column mt-10">
       <div v-show="gridCarregada" id="grid-pesquisa">
-        <Miniatura v-for="filme in filmes"
+        <MiniaturaFilme v-for="filme in filmes"
                    :key="filme.id"
                    :url="filme.poster_path"
                    :titulo="filme.title"

@@ -36,6 +36,7 @@ export const pesquisarFilmePorId = async (id) => {
     try {
         let response = await instanciaAxios().get(`3/movie/${id}`, {
             params: {
+                append_to_response: "credits,videos",
                 language: "pt-BR",
             }
         });

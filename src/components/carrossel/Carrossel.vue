@@ -1,12 +1,12 @@
 <script>
-import Miniatura from "@/components/cards/Miniatura.vue";
+import MiniaturaFilme from "@/components/cards/MiniaturaFilme.vue";
 import {Carousel, Slide, Navigation} from "vue3-carousel";
 
 import 'vue3-carousel/dist/carousel.css'
 
 export default {
   name: "Carrossel",
-  components: {Slide, Carousel, Navigation, Miniatura},
+  components: {Slide, Carousel, Navigation, MiniaturaFilme},
   data() {
     return {
       breakpoints: {
@@ -54,7 +54,7 @@ export default {
 
     <Slide v-for="(filme) in filmes" :key="filme.id">
       <div class="carousel__item">
-        <Miniatura :width="114" :height="191" :url="filme.poster_path"/>
+        <MiniaturaFilme :width="114" :height="191" :url="filme.poster_path"/>
       </div>
     </Slide>
 

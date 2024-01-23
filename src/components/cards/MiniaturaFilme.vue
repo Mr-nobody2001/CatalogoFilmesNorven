@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "Miniatura",
+  name: "MiniaturaFilme",
   data() {
     return {
       possuiLogo: false,
@@ -24,7 +24,7 @@ export default {
   computed: {
     montarUrl() {
       if (!this.url) {
-        return "@/assets/film.svg";
+        return "";
       }
 
       this.possuiLogo = true;
