@@ -1,8 +1,10 @@
-import instanciaAxios from "@/components/service/CriarInstanciaAxios.js";
+import instanciaAxios from "@/service/CriarInstanciaAxios.js";
 
-export const pesquisarFilmesPopulares = async () => {
+export const pesquisarTitulosPopulares = async (tipoConteudo = "filmes") => {
     try {
-        let response = await instanciaAxios().get('/3/movie/popular?&page=1', {
+        const conteudo = tipoConteudo === "filmes" ? "movie" : "tv";
+
+        let response = await instanciaAxios().get(`/3/${conteudo}/popular?&page=1`, {
             params: {
                 language: "pt-BR",
                 page: 1,
@@ -15,9 +17,11 @@ export const pesquisarFilmesPopulares = async () => {
     }
 }
 
-export const pesquisarFilmesPorTitulo = async (titulo, pagina = 1) => {
+export const pesquisarPorTitulo = async (titulo = "a", tipoConteudo = "filmes", pagina = 1) => {
     try {
-        let response = await instanciaAxios().get('3/search/movie', {
+        const conteudo = tipoConteudo === "filmes" ? "movie" : "tv";
+
+        let response = await instanciaAxios().get(`3/search/${conteudo}`, {
             params: {
                 query: titulo,
                 page: pagina,
@@ -32,9 +36,11 @@ export const pesquisarFilmesPorTitulo = async (titulo, pagina = 1) => {
     }
 }
 
-export const pesquisarFilmePorId = async (id) => {
+export const pesquisarTituloPorId = async (id, tipoConteudo = "filmes") => {
     try {
-        let response = await instanciaAxios().get(`3/movie/${id}`, {
+        const conteudo = tipoConteudo === "filmes" ? "movie" : "tv";
+
+        let response = await instanciaAxios().get(`3/${conteudo}/${id}`, {
             params: {
                 append_to_response: "credits,videos",
                 language: "pt-BR",

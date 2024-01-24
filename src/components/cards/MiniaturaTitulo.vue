@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "MiniaturaFilme",
+  name: "MiniaturaTitulo",
   data() {
     return {
       possuiLogo: false,

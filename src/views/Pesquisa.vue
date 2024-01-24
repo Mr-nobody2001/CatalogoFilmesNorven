@@ -1,16 +1,16 @@
 <script>
-import MiniaturaFilme from "@/components/cards/MiniaturaFilme.vue";
+import MiniaturaTitulo from "@/components/cards/MiniaturaTitulo.vue";
 import Paginacao from "@/components/paginacao/Paginacao.vue";
-import {pesquisarFilmesPorTitulo} from "@/components/service/TmdbService.js";
+import {pesquisarPorTitulo, pesquisarTitulosPopulares} from "@/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
 
 export default {
   name: "Pesquisa",
-  components: {IndicadorCarregamento, Paginacao, MiniaturaFilme, BarraPesquisa},
+  components: {IndicadorCarregamento, Paginacao, MiniaturaTitulo, BarraPesquisa},
   data() {
     return {
-      filmes: [],
+      titulos: [],
       pagina: 1,
       gridCarregada: false,
       quantidadePaginas: 0,
@@ -18,49 +18,84 @@ export default {
     }
   },
   computed: {
+    tipoConteudo() {
+      return this.$store.getters.tipoConteudo;
+    },
     pesquisa() {
       return this.$store.getters.pesquisa;
     },
-    numeroFilmesPositivo() {
-      return this.filmes.length > 0;
-    }
+    numeroTitulosPositivo() {
+      return this.titulos.length > 0;
+    },
   },
   watch: {
     pesquisa: {
       handler() {
-        this.realizarPesquisaPorNome(this.pesquisa, 1);
+        if (this.pesquisa !== null) {
+          this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo, 1);
+        }
       },
     },
+    tipoConteudo: {
+      handler() {
+        if (!this.pesquisa) {
+          this.obterTitulosPopulares(this.tipoConteudo);
+        } else {
+          this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo, 1);
+        }
+      }
+    }
   },
   methods: {
-    async obterFilmesPorTitulo(titulo, pagina) {
+    async obterTitulosPorNome(titulo, tipoConteudo, pagina) {
       try {
         this.gridCarregada = false;
-        this.filmes = [];
+        this.titulos = [];
 
-        const resposta = await pesquisarFilmesPorTitulo(titulo, pagina);
+        const resposta = await pesquisarPorTitulo(titulo, tipoConteudo, pagina);
 
-        this.filmes = resposta.results;
+        this.titulos = resposta.results;
 
         this.quantidadePaginas = resposta.total_pages;
         this.pagina = pagina;
         this.gridCarregada = true;
       } catch (error) {
-        console.error('Erro ao obter filmes populares: ', error.message);
+        console.error('Erro ao obter títulos: ', error.message);
+      }
+    },
+    async obterTitulosPopulares(tipoConteudo) {
+      try {
+        this.gridCarregada = false;
+        this.titulos = [];
+
+        const resposta = await pesquisarTitulosPopulares(tipoConteudo);
+
+        this.titulos = resposta.results;
+
+        this.quantidadePaginas = 1;
+        this.pagina = 1;
+        this.gridCarregada = true;
+      } catch (error) {
+        console.error('Erro ao obter títulos populares: ', error.message);
       }
     },
     trocarPagina(pagina) {
-      this.obterFilmesPorTitulo(this.pesquisa, pagina)
+      this.obterTitulosPorNome(this.pesquisa, this.tipoConteudo, pagina)
     },
-    realizarPesquisaPorNome(pesquisa) {
-      this.obterFilmesPorTitulo(pesquisa, 1);
+    realizarPesquisaPorNome(pesquisa, tipoConteudo) {
+      this.obterTitulosPorNome(pesquisa, tipoConteudo, 1);
     },
     acessarDetalhamento(id) {
-      this.$router.push({ name: 'detalhamento', params: { id: id }});
-    }
+      this.$router.push({name: 'detalhamento', params: {id: id}});
+    },
   },
   mounted() {
-    this.realizarPesquisaPorNome(this.pesquisa);
+    if (!this.pesquisa) {
+      this.obterTitulosPopulares("filmes");
+    } else {
+      this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo);
+    }
+
     this.paginaCarregada = true;
   }
 }
@@ -70,23 +105,24 @@ export default {
   <section id="pesquisa">
     <div v-show="paginaCarregada" class="d-flex flex-column mt-10">
       <div v-show="gridCarregada" id="grid-pesquisa">
-        <MiniaturaFilme v-for="filme in filmes"
-                   :key="filme.id"
-                   :url="filme.poster_path"
-                   :titulo="filme.title"
-                   @click="acessarDetalhamento(filme.id)"/>
+        <MiniaturaTitulo v-for="filme in titulos"
+                         :key="filme.id"
+                         :url="filme.poster_path"
+                         :titulo="filme.title || filme.original_name"
+                         @click="acessarDetalhamento(filme.id)"/>
       </div>
 
-      <div v-if="gridCarregada && !numeroFilmesPositivo" id="mensagem" class="d-flex flex-column align-center centralizar">
+      <div v-if="gridCarregada && !numeroTitulosPositivo" id="mensagem"
+           class="d-flex flex-column align-center centralizar">
         <i class="bi bi-database-slash"></i>
         <p>Nenhum filme encontrado.</p>
       </div>
 
-      <div v-show="gridCarregada && numeroFilmesPositivo">
+      <div v-show="gridCarregada && numeroTitulosPositivo">
         <Paginacao @trocar-pagina="trocarPagina" :pageProp="pagina" :length="quantidadePaginas"/>
       </div>
 
-      <div v-if="!gridCarregada && !numeroFilmesPositivo" class="centralizar">
+      <div v-if="!gridCarregada && !numeroTitulosPositivo" class="centralizar">
         <IndicadorCarregamento/>
       </div>
     </div>

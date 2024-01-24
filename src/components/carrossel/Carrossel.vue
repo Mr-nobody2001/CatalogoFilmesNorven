@@ -1,17 +1,17 @@
 <script>
-import MiniaturaFilme from "@/components/cards/MiniaturaFilme.vue";
+import MiniaturaTitulo from "@/components/cards/MiniaturaTitulo.vue";
 import {Carousel, Slide, Navigation} from "vue3-carousel";
 
 import 'vue3-carousel/dist/carousel.css'
 
 export default {
   name: "Carrossel",
-  components: {Slide, Carousel, Navigation, MiniaturaFilme},
+  components: {Slide, Carousel, Navigation, MiniaturaTitulo},
   data() {
     return {
       breakpoints: {
         576: {
-          itemsToShow: 2.95,
+          itemsToShow: 3.95,
           snapAlign: 'center',
         },
         992: {
@@ -30,7 +30,7 @@ export default {
     }
   },
   props: {
-    filmes: Array,
+    titulos: Array,
   },
   methods: {
     alertarInicioTroca() {
@@ -46,15 +46,15 @@ export default {
 <template>
   <Carousel @slide-start="alertarInicioTroca"
             @slide-end="alertarFimTroca"
-            :items-to-show="1"
+            :items-to-show="2.95"
             :wrapAround="true"
             :transition="500"
             :autoplay="8000"
             :breakpoints="breakpoints">
 
-    <Slide v-for="(filme) in filmes" :key="filme.id">
+    <Slide v-for="(filme) in titulos" :key="filme.id">
       <div class="carousel__item">
-        <MiniaturaFilme :width="114" :height="191" :url="filme.poster_path"/>
+        <MiniaturaTitulo :width="114" :height="191" :url="filme.poster_path"/>
       </div>
     </Slide>
 

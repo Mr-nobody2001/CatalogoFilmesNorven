@@ -1,6 +1,6 @@
 <script>
 import Carrossel from "@/components/carrossel/Carrossel.vue";
-import {pesquisarFilmesPopulares} from "@/components/service/TmdbService.js";
+import {pesquisarTitulosPopulares} from "@/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
 
@@ -9,69 +9,80 @@ export default {
   components: {IndicadorNota, IndicadorCarregamento, Carrossel},
   data() {
     return {
-      filmes: null,
-      filmeSelecionado: null,
-      dadosCarregados: false,
+      titulos: null,
       sliding: false,
+      dadosCarregados: false,
+      tituloSelecionado: null,
     }
   },
   methods: {
-    async obterFilmesPopulares() {
-      try {
-        this.filmes = (await pesquisarFilmesPopulares()).results;
-      } catch (error) {
-        console.error('Erro ao obter filmes populares: ', error.message);
-      }
+    async obterTitulosPopulares(tipoConteudo) {
+      this.titulos = (await pesquisarTitulosPopulares(tipoConteudo)).results;
     },
-    async inserirPrimeiroFilme() {
-      await this.obterFilmesPopulares();
-      this.filmeSelecionado = this.filmes[0];
+    async inserirPrimeiroTitulo(tipoConteudo) {
+      await this.obterTitulosPopulares(tipoConteudo);
+      this.tituloSelecionado = this.titulos[0];
       this.dadosCarregados = true;
     },
-    trocarInformacoesFilme(currentSlideIndex) {
-      this.filmeSelecionado = this.filmes[currentSlideIndex];
+    trocarInformacoesTitulo(currentSlideIndex) {
+      this.tituloSelecionado = this.titulos[currentSlideIndex];
       this.sliding = false;
     },
     startSlideHandle() {
       this.sliding = true;
     },
     acessarDetalhamento() {
-      console.log(this.filmeSelecionado.id)
-      this.$router.push({name: 'detalhamento', params: {id: this.filmeSelecionado.id}});
+      this.$router.push({name: 'detalhamento', params: {id: this.tituloSelecionado.id}});
     }
   },
   computed: {
     formatarOverview() {
-      const overview = this.filmeSelecionado.overview;
+      const overview = this.tituloSelecionado.overview;
+
+      if (!overview) {
+        return 'Indisponível';
+      }
 
       if (overview.length > 200) {
         return overview.slice(0, 200) + "...";
       }
 
-      if (!overview) {
-        return 'Indisponível'
-      }
-
       return overview;
     },
     formatarAnoLancamento() {
-      return new Date(this.filmeSelecionado.release_date).getFullYear();
+
+      if (this.tituloSelecionado.release_date) {
+        const anoLancamento = new Date(this.tituloSelecionado.release_date).getFullYear();
+        return `(${anoLancamento})`;
+      }
+
+      return "";
     },
     prepararUrlBackground() {
-      return `http://image.tmdb.org/t/p/original/${this.filmeSelecionado.backdrop_path}`;
+      return `http://image.tmdb.org/t/p/original/${this.tituloSelecionado.backdrop_path}`;
     },
     prepararUrlLogo() {
-      return `http://image.tmdb.org/t/p/w300/${this.filmeSelecionado.poster_path}`;
+      return `http://image.tmdb.org/t/p/w300/${this.tituloSelecionado.poster_path}`;
+    },
+    tipoConteudo() {
+      return this.$store.getters.tipoConteudo;
     },
   },
+  watch: {
+    tipoConteudo: {
+      async handler() {
+        await this.inserirPrimeiroTitulo(this.tipoConteudo);
+      }
+    }
+  },
   async mounted() {
-    await this.inserirPrimeiroFilme();
+    await this.inserirPrimeiroTitulo(this.tipoConteudo);
   }
 }
 </script>
 
 <template>
-  <section id="populares" class="d-flex flex-column justify-center">
+  <section id="populares" class="d-flex flex-column justify-center mt-5">
     <div class="d-flex flex-column" v-if="dadosCarregados">
       <div id="informacoes" class="ajustar-background animate__animated"
            :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
@@ -79,16 +90,16 @@ export default {
 
         <div id="informacoes-imagem-texto">
           <div class="rounded-sm">
-            <img class="rounded-sm" :src="prepararUrlLogo" :alt="filmeSelecionado.title">
+            <img class="rounded-sm" :src="prepararUrlLogo" :alt="tituloSelecionado.title">
           </div>
 
-          <div class="d-flex flex-column justify-space-between gap" style="width: 100%">
+          <div class="w-100">
             <div>
-              <h1>{{ filmeSelecionado.title }} ({{ formatarAnoLancamento }})</h1>
+              <h1>{{ tituloSelecionado.title || tituloSelecionado.original_name }} {{ formatarAnoLancamento }}</h1>
             </div>
 
             <div class="d-flex flex-row align-center gap">
-              <IndicadorNota :nota="filmeSelecionado.vote_average"/>
+              <IndicadorNota :nota="tituloSelecionado.vote_average"/>
               <p>Avaliação <br> dos <br> usuários</p>
             </div>
 
@@ -105,13 +116,6 @@ export default {
                      rounded="xl"
                      @click="acessarDetalhamento">Detalhes
               </v-btn>
-
-              <v-btn class="texto-branco"
-                     size="x-large"
-                     color="amber"
-                     density="compact"
-                     icon="mdi-plus">
-              </v-btn>
             </div>
           </div>
         </div>
@@ -119,8 +123,8 @@ export default {
 
       <div id="carrossel">
         <Carrossel @alertar-inicio-troca="startSlideHandle"
-                   @alertar-fim-troca="trocarInformacoesFilme"
-                   :filmes="filmes"/>
+                   @alertar-fim-troca="trocarInformacoesTitulo"
+                   :titulos="titulos"/>
       </div>
     </div>
 
@@ -166,14 +170,27 @@ body::-webkit-scrollbar {
 #informacoes-imagem-texto {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 20px;
 }
 
 @media (min-width: 768px) {
   #informacoes-imagem-texto {
     flex-direction: row;
+  }
+}
+
+#informacoes-imagem-texto div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  #informacoes-imagem-texto div:nth-child(2) {
+    align-items: start;
   }
 }
 

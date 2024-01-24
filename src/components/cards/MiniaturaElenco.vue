@@ -8,6 +8,10 @@ export default {
   },
   computed: {
     prepararUrl() {
+      if (!this.url) {
+        return "src/assets/placeholder.svg"
+      }
+
       return `https://image.tmdb.org/t/p/original/${this.url}`
     }
   }
@@ -22,6 +26,8 @@ export default {
   >
     <v-img
         :src="prepararUrl"
+        min-width="185px"
+        min-height="288px"
         cover
     ></v-img>
 

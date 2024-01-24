@@ -1,7 +1,7 @@
 <script>
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
-import {pesquisarFilmePorId} from "@/components/service/TmdbService.js";
+import {pesquisarTituloPorId} from "@/service/TmdbService.js";
 import MiniaturaElenco from "@/components/cards/MiniaturaElenco.vue";
 
 export default {
@@ -16,15 +16,15 @@ export default {
     }
   },
   methods: {
-    async obterFilmePorId(id) {
+    async obterFilmePorId(id, tipoConteudo) {
       try {
-        this.filme = await pesquisarFilmePorId(id);
+        this.filme = await pesquisarTituloPorId(id, tipoConteudo);
       } catch (error) {
         console.error('Erro ao obter filmes populares: ', error.message);
       }
     },
-    async inserirFilme(id) {
-      await this.obterFilmePorId(id);
+    async inserirFilme(id, tipoConteudo) {
+      await this.obterFilmePorId(id, tipoConteudo);
       this.dadosCarregados = true;
     },
   },
@@ -74,8 +74,7 @@ export default {
     },
     prepararUrlLogo() {
       if (!this.filme.poster_path) {
-        console.log('ok')
-        return "@/assets/film.svg";
+        return "src/assets/placeholder.svg";
       }
 
       this.possuiLogo = true;
@@ -116,10 +115,13 @@ export default {
     },
     possuiElenco() {
       return this.filme.credits.cast.length > 0;
-    }
+    },
+    tipoConteudo() {
+      return this.$store.getters.tipoConteudo;
+    },
   },
   async mounted() {
-    await this.inserirFilme(this.$route.params.id);
+    await this.inserirFilme(this.$route.params.id, this.tipoConteudo);
   }
 }
 </script>
@@ -162,13 +164,6 @@ export default {
                 <p>{{ formatarOverview }}</p>
               </div>
             </div>
-
-            <v-btn class="texto-branco"
-                   size="x-large"
-                   color="amber"
-                   density="compact"
-                   icon="mdi-plus">
-            </v-btn>
           </div>
         </div>
       </div>
@@ -265,6 +260,11 @@ export default {
 #imagem {
   width: 300px;
   height: 450px;
+}
+
+.ajustar-imagem {
+  width: 100%;
+  height: 100%;
 }
 
 #elenco {
