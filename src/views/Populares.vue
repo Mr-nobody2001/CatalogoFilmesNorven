@@ -82,15 +82,15 @@ export default {
 </script>
 
 <template>
-  <section id="populares" class="d-flex flex-column justify-center mt-5">
-    <div class="d-flex flex-column" v-if="dadosCarregados">
-      <div id="informacoes" class="ajustar-background animate__animated"
-           :class="{ 'animate__fadeOutLeft': sliding, 'animate__fadeInRight': !sliding }"
+  <section id="populares" class="d-flex flex-column justify-center mt-5 h-auto">
+    <div class="d-flex flex-column justify-space-between" v-if="dadosCarregados">
+      <div id="container-informacoes-titulo" class="ajustar-background animate__animated"
+           :class="{ 'animate__fadeOut': sliding, 'animate__fadeInRight': !sliding }"
            :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
-        <div id="informacoes-imagem-texto">
-          <div class="rounded-sm">
-            <img class="rounded-sm" :src="prepararUrlLogo" :alt="tituloSelecionado.title">
+        <div id="informacoes-titulo">
+          <div>
+            <img class="rounded-lg" :src="prepararUrlLogo" :alt="tituloSelecionado.title">
           </div>
 
           <div class="w-100">
@@ -121,10 +121,11 @@ export default {
         </div>
       </div>
 
-      <div id="carrossel">
+      <div class="h-100">
         <Carrossel @alertar-inicio-troca="startSlideHandle"
                    @alertar-fim-troca="trocarInformacoesTitulo"
-                   :titulos="titulos"/>
+                   :titulos="titulos"
+        />
       </div>
     </div>
 
@@ -143,45 +144,37 @@ body::-webkit-scrollbar {
 <style scoped>
 #populares {
   min-height: 100vh;
-  height: auto;
-}
-
-#populares > div:last-child {
-  height: 100%;
   color: var(--branco);
 }
 
-#informacoes {
+#container-informacoes-titulo {
   width: 100%;
   height: 100%;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px var(--preto);
 }
 
-#informacoes > div {
+#informacoes-titulo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
   width: 100%;
   height: 100%;
-  padding: 0 25px;
+  padding: 0 40px;
   backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
 
-#informacoes-imagem-texto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
 @media (min-width: 768px) {
-  #informacoes-imagem-texto {
+  #informacoes-titulo {
     flex-direction: row;
   }
 }
 
-#informacoes-imagem-texto div:nth-child(2) {
+#informacoes-titulo div:nth-child(2) {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -189,29 +182,20 @@ body::-webkit-scrollbar {
 }
 
 @media (min-width: 768px) {
-  #informacoes-imagem-texto div:nth-child(2) {
+  #informacoes-titulo div:nth-child(2) {
     align-items: start;
   }
 }
 
-#informacoes h1 {
-  font-size: 1.5rem;
-  font-weight: bolder;
-}
-
-#informacoes p {
+#container-informacoes-titulo p {
   width: 100%;
   font-size: 1.05rem;
 }
 
 @media (min-width: 1200px) {
-  #informacoes p {
+  #container-informacoes-titulo p {
     width: 50%;
   }
-}
-
-#carrossel {
-  height: 100%;
 }
 
 #indicador-carregamento {
@@ -219,11 +203,9 @@ body::-webkit-scrollbar {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: auto !important;
 }
 
 .ajustar-background {
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }

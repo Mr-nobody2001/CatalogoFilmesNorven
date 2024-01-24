@@ -129,11 +129,11 @@ export default {
 <template>
   <section id="detalhamento" class="d-flex flex-column justify-center">
     <div class="d-flex flex-column mt-15" v-if="dadosCarregados">
-      <div id="informacoes" class="ajustar-background"
+      <div id="container-informacoes-titulo" class="ajustar-background"
            :class="{ 'cor-background':!possuiBackground }"
            :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
-        <div id="informacoes-imagem-texto" class="d-flex justify-space-between">
+        <div id="informacoes-titulo" class="d-flex justify-space-between">
           <div id="imagem" :class="{ 'cor-logo':!possuiLogo }" class="rounded-lg">
             <img class="rounded-lg" :src="prepararUrlLogo" :alt="filme.title">
           </div>
@@ -209,14 +209,14 @@ export default {
   color: var(--branco);
 }
 
-#informacoes {
+#container-informacoes-titulo {
   width: 100%;
   height: 100%;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px var(--preto);
 }
 
-#informacoes > div {
+#container-informacoes-titulo > div {
   width: 100%;
   height: 100%;
   backdrop-filter: blur(5px) brightness(0.3);
@@ -224,7 +224,7 @@ export default {
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
 
-#informacoes-imagem-texto {
+#informacoes-titulo {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -235,17 +235,17 @@ export default {
 }
 
 @media (min-width: 768px) {
-  #informacoes-imagem-texto {
+  #informacoes-titulo {
     flex-direction: row;
   }
 }
 
-#informacoes h1 {
+#container-informacoes-titulo h1 {
   font-size: 1.5rem;
   font-weight: bolder;
 }
 
-#informacoes p {
+#container-informacoes-titulo p {
   font-size: 1.05rem;
 }
 

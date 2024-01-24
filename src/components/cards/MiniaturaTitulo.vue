@@ -42,7 +42,7 @@ export default {
 
 <template>
   <div class="miniatura">
-    <v-card class="d-flex justify-center rounded-lg"
+    <v-card class="d-flex justify-center"
             :width
             :height
             :image="montarUrl"
