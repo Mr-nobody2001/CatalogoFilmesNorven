@@ -1,6 +1,6 @@
 <script setup>
-import Pesquisa from "@/views/Pesquisa.vue";
 import Menu from "@/components/menu/Menu.vue";
+import MensagemAlerta from "@/components/alertas/MensagemAlerta.vue";
 </script>
 
 <template>

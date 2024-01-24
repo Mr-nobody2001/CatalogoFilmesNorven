@@ -62,7 +62,7 @@ export default {
       return `http://image.tmdb.org/t/p/original/${this.tituloSelecionado.backdrop_path}`;
     },
     prepararUrlLogo() {
-      return `http://image.tmdb.org/t/p/w300/${this.tituloSelecionado.poster_path}`;
+      return `http://image.tmdb.org/t/p/original/${this.tituloSelecionado.poster_path}`;
     },
     tipoConteudo() {
       return this.$store.getters.tipoConteudo;
@@ -89,7 +89,7 @@ export default {
            :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
         <div id="informacoes-titulo">
-          <div>
+          <div id="logo-titulo">
             <img class="rounded-lg" :src="prepararUrlLogo" :alt="tituloSelecionado.title">
           </div>
 
@@ -166,6 +166,16 @@ body::-webkit-scrollbar {
   backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
   linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
+}
+
+#logo-titulo {
+  max-width: 300px;
+  max-height: 450px;
+}
+
+#logo-titulo > img {
+  width: 100%;
+  height: 100%;
 }
 
 @media (min-width: 768px) {

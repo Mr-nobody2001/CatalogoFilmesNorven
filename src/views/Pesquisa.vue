@@ -4,17 +4,19 @@ import Paginacao from "@/components/paginacao/Paginacao.vue";
 import {pesquisarPorTitulo, pesquisarTitulosPopulares} from "@/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
+import MensagemAlerta from "@/components/alertas/MensagemAlerta.vue";
 
 export default {
   name: "Pesquisa",
-  components: {IndicadorCarregamento, Paginacao, MiniaturaTitulo, BarraPesquisa},
+  components: {IndicadorCarregamento, Paginacao, MiniaturaTitulo, BarraPesquisa, MensagemAlerta},
   data() {
     return {
-      titulos: [],
       pagina: 1,
-      gridCarregada: false,
+      titulos: [],
       quantidadePaginas: 0,
+      gridCarregada: false,
       paginaCarregada: false,
+      erroPesquisa: false,
     }
   },
   computed: {
@@ -31,7 +33,7 @@ export default {
   watch: {
     pesquisa: {
       handler() {
-        if (this.pesquisa !== null) {
+        if (this.pesquisa) {
           this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo, 1);
         }
       },
@@ -39,7 +41,7 @@ export default {
     tipoConteudo: {
       handler() {
         if (!this.pesquisa) {
-          this.obterTitulosPopulares(this.tipoConteudo);
+          this.realizarPesquisaTitulosPopulares(this.tipoConteudo);
         } else {
           this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo, 1);
         }
@@ -49,13 +51,12 @@ export default {
   methods: {
     async obterTitulosPorNome(titulo, tipoConteudo, pagina) {
       try {
-        this.gridCarregada = false;
         this.titulos = [];
+        this.gridCarregada = false;
 
         const resposta = await pesquisarPorTitulo(titulo, tipoConteudo, pagina);
 
         this.titulos = resposta.results;
-
         this.quantidadePaginas = resposta.total_pages;
         this.pagina = pagina;
         this.gridCarregada = true;
@@ -65,13 +66,12 @@ export default {
     },
     async obterTitulosPopulares(tipoConteudo) {
       try {
-        this.gridCarregada = false;
         this.titulos = [];
+        this.gridCarregada = false;
 
         const resposta = await pesquisarTitulosPopulares(tipoConteudo);
 
         this.titulos = resposta.results;
-
         this.quantidadePaginas = 1;
         this.pagina = 1;
         this.gridCarregada = true;
@@ -82,6 +82,9 @@ export default {
     trocarPagina(pagina) {
       this.obterTitulosPorNome(this.pesquisa, this.tipoConteudo, pagina)
     },
+    realizarPesquisaTitulosPopulares(tipoConteudo = "filmes") {
+      this.obterTitulosPopulares(tipoConteudo);
+    },
     realizarPesquisaPorNome(pesquisa, tipoConteudo) {
       this.obterTitulosPorNome(pesquisa, tipoConteudo, 1);
     },
@@ -91,7 +94,7 @@ export default {
   },
   mounted() {
     if (!this.pesquisa) {
-      this.obterTitulosPopulares("filmes");
+      this.realizarPesquisaTitulosPopulares();
     } else {
       this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo);
     }
