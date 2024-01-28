@@ -35,6 +35,8 @@ export default {
       handler() {
         if (this.pesquisa) {
           this.realizarPesquisaPorNome(this.pesquisa, this.tipoConteudo, 1);
+        } else {
+          this.realizarPesquisaTitulosPopulares(this.tipoConteudo);
         }
       },
     },

@@ -42,13 +42,7 @@ export default {
 
 <template>
   <div class="miniatura">
-    <v-card class="d-flex justify-center"
-            :width
-            :height
-            :image="montarUrl"
-            theme="dark"
-            hover
-    >
+    <v-card class="d-flex justify-center" :width :height :image="montarUrl" theme="dark" hover>
       <i v-if="!possuiLogo" class="bi bi-film align-self-center"></i>
     </v-card>
 

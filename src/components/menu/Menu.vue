@@ -2,7 +2,7 @@
 import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
 
 export default {
-  components: {BarraPesquisa},
+  components: { BarraPesquisa },
   data() {
     return {
       tipoConteudo: null,
@@ -15,7 +15,12 @@ export default {
       } else {
         this.$store.dispatch('atualizarTipoConteudo', this.tipoConteudo);
       }
-    }
+    },
+    voltarPaginaInicial() {
+      if (this.$route.name !== "inicio") {
+        this.$router.push({ name: "inicio" });
+      }
+    },
   },
   computed: {
     paginaDetalhamento() {
@@ -27,20 +32,18 @@ export default {
 
 <template>
   <div id="menu">
-    <img src="" alt="">
+    <div class="d-flex w-50 gap">
+      <img @click="voltarPaginaInicial" id="logo-menu" src="@/assets/claquete.png" alt="claquete">
 
-    <div v-if="!paginaDetalhamento" id="switch" class="d-flex justify-space-between align-center gap">
-      <p>Filmes</p>
-      <v-switch @click="mudarTipoConteudo" class="d-flex justify-center"
-                v-model="tipoConteudo"
-                hide-details
-                false-value="tv"
-                true-value="filmes"
-      ></v-switch>
-      <p>TV</p>
+      <div v-if="!paginaDetalhamento" id="switch" class="d-flex justify-space-between align-center gap">
+        <p>Filmes</p>
+        <v-switch @click="mudarTipoConteudo" class="d-flex justify-center" v-model="tipoConteudo" hide-details
+          false-value="tv" true-value="filmes"></v-switch>
+        <p>TV</p>
+      </div>
     </div>
 
-    <BarraPesquisa/>
+    <BarraPesquisa />
   </div>
 </template>
 
@@ -54,7 +57,19 @@ export default {
   gap: 10px;
 }
 
+#logo-menu {
+  width: 80px;
+}
+
+#logo-menu:hover {
+  cursor: pointer;
+}
+
 #switch {
   gap: 10px;
+}
+
+.gap {
+  gap: 100px
 }
 </style>

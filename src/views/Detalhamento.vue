@@ -1,94 +1,95 @@
 <script>
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
-import {pesquisarTituloPorId} from "@/service/TmdbService.js";
+import { pesquisarTituloPorId } from "@/service/TmdbService.js";
 import MiniaturaElenco from "@/components/cards/MiniaturaElenco.vue";
 
 export default {
   name: "Detalhamento",
-  components: {MiniaturaElenco, IndicadorNota, IndicadorCarregamento},
+  components: { MiniaturaElenco, IndicadorNota, IndicadorCarregamento },
   data() {
     return {
-      filme: null,
+      titulo: null,
       dadosCarregados: false,
       possuiLogo: false,
       possuiBackground: false,
     }
   },
   methods: {
-    async obterFilmePorId(id, tipoConteudo) {
+    async obterTituloPorId(id, tipoConteudo) {
       try {
-        this.filme = await pesquisarTituloPorId(id, tipoConteudo);
+        this.titulo = await pesquisarTituloPorId(id, tipoConteudo);
       } catch (error) {
-        console.error('Erro ao obter filmes populares: ', error.message);
+        console.error('Erro ao obter título: ', error.message);
       }
     },
-    async inserirFilme(id, tipoConteudo) {
-      await this.obterFilmePorId(id, tipoConteudo);
+    async inserirTitulo(id, tipoConteudo) {
+      await this.obterTituloPorId(id, tipoConteudo);
       this.dadosCarregados = true;
     },
   },
   computed: {
     formatarDataLancamento() {
-      if (this.filme.release_date) {
-        const formatoData = new Intl.DateTimeFormat('pt-BR',
-            {day: '2-digit', month: '2-digit', year: 'numeric'});
-
-        return formatoData.format(new Date(this.filme.release_date))
+      if (!this.titulo.release_date) {
+        return "Data de lançamento não informada";
       }
 
-      return "Data de lançamento não informada";
+      const formatoData = new Intl.DateTimeFormat('pt-BR',
+        { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      return ` ${formatoData.format(new Date(this.titulo.release_date))} `;
     },
     formatarListaGeneros() {
-      if (this.filme.genres.length > 0) {
-        if (this.filme.genres.length === 1) {
-          return this.filme.genres[0].name;
+      if (this.titulo.genres.length > 0) {
+        if (this.titulo.genres.length === 1) {
+
+          return this.titulo.genres[0].name;
         }
 
         let listaGenero = "";
         let i = 0;
 
-        for (; i > this.filme.genres.length - 1; i++) {
-          listaGenero += this.filme.genres[i].name + ", ";
+        for (; i < this.titulo.genres.length - 1; i++) {
+          listaGenero += this.titulo.genres[i].name + ", ";
         }
 
-        return listaGenero += this.filme.genres[++i].name;
+        return listaGenero += this.titulo.genres[i].name + " ";
       }
 
       return "Gênero não informado";
     },
     formatarAnoLancamento() {
-      if (this.filme.release_date) {
-        return new Date(this.filme.release_date).getFullYear()
+      if (!this.titulo.release_date) {
+        return "";
       }
 
-      return "Ano de lançamento não informado";
+      return `(${new Date(this.titulo.release_date).getFullYear()})`;
     },
     prepararUrlBackground() {
-      if (!this.filme.backdrop_path) {
+      if (!this.titulo.backdrop_path) {
         return "";
       }
 
       this.possuiBackground = true;
-      return `http://image.tmdb.org/t/p/original/${this.filme.backdrop_path}`;
+      return `http://image.tmdb.org/t/p/original/${this.titulo.backdrop_path}`;
     },
     prepararUrlLogo() {
-      if (!this.filme.poster_path) {
-        return "src/assets/placeholder.svg";
+      if (!this.titulo.poster_path) {
+        return "https://placehold.co/300x450?text=Logo+do+Título&font=roboto";
       }
 
       this.possuiLogo = true;
-      return `http://image.tmdb.org/t/p/w300/${this.filme.poster_path}`;
+      return `http://image.tmdb.org/t/p/original/${this.titulo.poster_path}`;
     },
     formatarDuracao() {
-      if (this.filme.runtime) {
-        return `${Math.floor(this.filme.runtime / 60)}h ${this.filme.runtime % 60}m`
+      if (!this.titulo.runtime) {
+        return "Duração Indeterminada";
       }
 
-      return "0h 0m";
+      return `${Math.floor(this.titulo.runtime / 60)}h ${this.titulo.runtime % 60}m`
     },
     formatarOverview() {
-      const overview = this.filme.overview;
+      const overview = this.titulo.overview;
 
       if (!overview) {
         return 'Indisponível'
@@ -97,31 +98,31 @@ export default {
       return overview;
     },
     filtrarElenco() {
-      if (this.possuiElenco) {
-        return this.filme.credits.cast.slice(0, 7);
+      if (!this.possuiElenco) {
+        return [];
       }
 
-      return [];
+      return this.titulo.credits.cast.slice(0, 7);
     },
     prepararUrlVideo() {
       if (!this.possuiVideo) {
         return "";
       }
 
-      return `https://www.youtube.com/embed/${this.filme.videos.results[0].key}`;
+      return `https://www.youtube.com/embed/${this.titulo.videos.results[0].key}`;
     },
     possuiVideo() {
-      return this.filme.videos.results[0];
+      return this.titulo.videos.results[0];
     },
     possuiElenco() {
-      return this.filme.credits.cast.length > 0;
+      return this.titulo.credits.cast.length > 0;
     },
     tipoConteudo() {
       return this.$store.getters.tipoConteudo;
     },
   },
   async mounted() {
-    await this.inserirFilme(this.$route.params.id, this.tipoConteudo);
+    await this.inserirTitulo(this.$route.params.id, this.tipoConteudo);
   }
 }
 </script>
@@ -129,19 +130,18 @@ export default {
 <template>
   <section id="detalhamento" class="d-flex flex-column justify-center">
     <div class="d-flex flex-column mt-15" v-if="dadosCarregados">
-      <div id="container-informacoes-titulo" class="ajustar-background"
-           :class="{ 'cor-background':!possuiBackground }"
-           :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
+      <div id="container-informacoes-titulo" class="ajustar-background" :class="{ 'cor-background': !possuiBackground }"
+        :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
         <div id="informacoes-titulo" class="d-flex justify-space-between">
-          <div id="imagem" :class="{ 'cor-logo':!possuiLogo }" class="rounded-lg">
-            <img class="rounded-lg" :src="prepararUrlLogo" :alt="filme.title">
+          <div id="logo-titulo" class="rounded-lg">
+            <img class="rounded-lg" :src="prepararUrlLogo" :alt="titulo.title">
           </div>
 
           <div class="d-flex justify-space-between gap w-100">
             <div class="d-flex flex-column justify-space-between gap">
               <div>
-                <h1>{{ filme.title }} ({{ formatarAnoLancamento }})</h1>
+                <h1>{{ titulo.title || titulo.original_name }} {{ formatarAnoLancamento }}</h1>
               </div>
 
               <div class="d-flex justify-start">
@@ -153,12 +153,12 @@ export default {
               </div>
 
               <div class="d-flex flex-row align-center gap">
-                <IndicadorNota :nota="filme.vote_average"/>
+                <IndicadorNota :nota="titulo.vote_average" />
                 <p>Avaliação <br> dos <br> usuários</p>
               </div>
 
               <div class="d-flex flex-column gap">
-                <p>{{ filme.tagline }}</p>
+                <p>{{ titulo.tagline }}</p>
 
                 <h2>Sinopse</h2>
                 <p>{{ formatarOverview }}</p>
@@ -170,28 +170,21 @@ export default {
 
       <div v-if="possuiElenco" class="rounded-md">
         <h3 class="mb-3">Elenco principal</h3>
-        <div id="elenco" class="d-flex gap">
-          <MiniaturaElenco v-for="membroElenco in filtrarElenco"
-                           :key="membroElenco.id"
-                           :nome="membroElenco.name"
-                           :papel="membroElenco.character"
-                           :url="membroElenco.profile_path"/>
+        <div id="elenco" class="d-flex justify-start">
+          <MiniaturaElenco v-for="membroElenco in filtrarElenco" :key="membroElenco.id" :nome="membroElenco.name"
+            :papel="membroElenco.character" :url="membroElenco.profile_path" />
         </div>
       </div>
 
       <div v-if="possuiVideo" class="container-iframe">
-        <iframe class="iframe-responsivo rounded-lg mt-5"
-                width="100%"
-                height="515px"
-                :src="prepararUrlVideo"
-                title="YouTube video player"
-                allowfullscreen>
+        <iframe class="iframe-responsivo rounded-lg mt-5" width="100%" height="515px" :src="prepararUrlVideo"
+          title="YouTube video player" allowfullscreen>
         </iframe>
       </div>
     </div>
 
     <div id="indicador-carregamento" v-else>
-      <IndicadorCarregamento/>
+      <IndicadorCarregamento />
     </div>
   </section>
 </template>
@@ -203,7 +196,7 @@ export default {
   padding-bottom: 40px;
 }
 
-#detalhamento > div:last-child {
+#detalhamento>div:last-child {
   height: 100%;
   gap: 30px;
   color: var(--branco);
@@ -216,12 +209,12 @@ export default {
   text-shadow: 2px 2px 4px var(--preto);
 }
 
-#container-informacoes-titulo > div {
+#container-informacoes-titulo>div {
   width: 100%;
   height: 100%;
   backdrop-filter: blur(5px) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
-  linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
+    linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
 
 #informacoes-titulo {
@@ -257,9 +250,14 @@ export default {
   height: auto !important;
 }
 
-#imagem {
-  width: 300px;
-  height: 450px;
+#logo-titulo {
+  max-width: 300px;
+  max-height: 450px;
+}
+
+#logo-titulo>img {
+  width: 100%;
+  height: 100%;
 }
 
 .ajustar-imagem {
@@ -271,10 +269,6 @@ export default {
   width: 100%;
   padding: 20px 0;
   overflow-x: scroll;
-}
-
-.cor-logo {
-  background-color: var(--cinza-ardosia-escuro);
 }
 
 .cor-background {

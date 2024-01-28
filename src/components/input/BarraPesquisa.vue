@@ -11,7 +11,7 @@ export default {
       this.$store.dispatch('atualizaPesquisa', this.pesquisa);
 
       if (this.$route.name !== "pesquisar") {
-        this.$router.push({name: "pesquisa"});
+        this.$router.push({ name: "pesquisa" });
       }
     }
   }
@@ -20,7 +20,7 @@ export default {
 
 <template>
   <div id="barra-pesquisa" class="d-flex">
-    <input type="text" @keyup.enter="pesquisar" v-model="pesquisa" placeholder="Pesquisar por um filme..."/>
+    <input type="text" @keyup.enter="pesquisar" v-model="pesquisa" placeholder="Pesquisar por um filme..." />
     <i @click="pesquisar" class="bi bi-search"></i>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
   background-color: var(--cinza-ardosia-escuro);
 }
 
-#barra-pesquisa > input {
+#barra-pesquisa>input {
   width: 100%;
   border: none;
   outline: none;

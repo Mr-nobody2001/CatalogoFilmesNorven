@@ -1,12 +1,12 @@
 <script>
 import MiniaturaTitulo from "@/components/cards/MiniaturaTitulo.vue";
-import {Carousel, Slide, Navigation} from "vue3-carousel";
+import { Carousel, Slide, Navigation } from "vue3-carousel";
 
 import 'vue3-carousel/dist/carousel.css'
 
 export default {
   name: "Carrossel",
-  components: {Slide, Carousel, Navigation, MiniaturaTitulo},
+  components: { Slide, Carousel, Navigation, MiniaturaTitulo },
   data() {
     return {
       breakpoints: {
@@ -36,7 +36,7 @@ export default {
     alertarInicioTroca() {
       this.$emit('alertar-inicio-troca');
     },
-    alertarFimTroca({currentSlideIndex}) {
+    alertarFimTroca({ currentSlideIndex }) {
       this.$emit('alertar-fim-troca', currentSlideIndex);
     },
   },
@@ -44,22 +44,17 @@ export default {
 </script>
 
 <template>
-  <Carousel @slide-start="alertarInicioTroca"
-            @slide-end="alertarFimTroca"
-            :items-to-show="2.95"
-            :wrapAround="true"
-            :transition="500"
-            :autoplay="8000"
-            :breakpoints="breakpoints">
+  <Carousel @slide-start="alertarInicioTroca" @slide-end="alertarFimTroca" :items-to-show="2.95" :wrapAround="true"
+    :transition="500" :autoplay="8000" :breakpoints="breakpoints">
 
     <Slide v-for="(filme) in titulos" :key="filme.id">
       <div class="carousel__item">
-        <MiniaturaTitulo :width="114" :height="191" :url="filme.poster_path"/>
+        <MiniaturaTitulo :width="114" :height="191" :url="filme.poster_path" />
       </div>
     </Slide>
 
     <template #addons>
-      <Navigation/>
+      <Navigation />
     </template>
   </Carousel>
 </template>
