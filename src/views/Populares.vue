@@ -158,7 +158,7 @@ body::-webkit-scrollbar {
   gap: 50px;
   width: 100%;
   height: 100%;
-  padding: 0 40px;
+  padding: 0 80px;
   backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
     linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
@@ -174,7 +174,7 @@ body::-webkit-scrollbar {
   height: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   #informacoes-titulo {
     flex-direction: row;
   }
@@ -187,7 +187,7 @@ body::-webkit-scrollbar {
   gap: 20px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   #informacoes-titulo div:nth-child(2) {
     align-items: start;
   }
