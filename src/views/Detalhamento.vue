@@ -1,32 +1,107 @@
 <script>
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
-import { pesquisarTituloPorId } from "@/service/TmdbService.js";
+import { pesquisarTituloPorId, alterarListaFavoritos } from "@/service/TmdbService.js";
 import MiniaturaElenco from "@/components/cards/MiniaturaElenco.vue";
+import MensagemAlerta from "@/components/alertas/MensagemAlerta.vue";
 
 export default {
   name: "Detalhamento",
-  components: { MiniaturaElenco, IndicadorNota, IndicadorCarregamento },
+  components: { MiniaturaElenco, IndicadorNota, IndicadorCarregamento, MensagemAlerta },
   data() {
     return {
       titulo: null,
       dadosCarregados: false,
       possuiLogo: false,
       possuiBackground: false,
+      favorito: false,
+      erro: false,
+      sucesso: false,
     }
   },
   methods: {
     async obterTituloPorId(id, tipoConteudo) {
-      try {
-        this.titulo = await pesquisarTituloPorId(id, tipoConteudo);
-      } catch (error) {
-        console.error('Erro ao obter título: ', error.message);
-      }
+      this.titulo = await pesquisarTituloPorId(id, tipoConteudo);
     },
     async inserirTitulo(id, tipoConteudo) {
       await this.obterTituloPorId(id, tipoConteudo);
       this.dadosCarregados = true;
     },
+    async favoritarTitulo() {
+      try {
+        this.sucesso = false;
+        this.erro = false;
+
+        this.favorito = !this.favorito;
+
+        await alterarListaFavoritos(this.titulo.id, this.tipoConteudoDetalhamento);
+
+        this.salvarListaFavoritosVuex();
+
+        this.sucesso = true;
+      } catch (e) {
+        this.erro = true;
+        console.error("Erro ao inserir título na lista de favoritos")
+      }
+    },
+    async desfavoritarTitulo() {
+      try {
+        this.sucesso = false;
+        this.erro = false;
+
+        this.favorito = !this.favorito;
+
+        await alterarListaFavoritos(this.titulo.id, this.tipoConteudoDetalhamento, false);
+
+        this.removerListaFavoritosVuex();
+
+        this.sucesso = true;
+      } catch (e) {
+        this.erro = true;
+        console.error("Erro ao inserir título na lista de favoritos")
+      }
+    },
+    async salvarListaFavoritosVuex() {
+      const titulo = {
+        id: this.titulo.id,
+        nome: this.titulo.title || this.titulo.original_name,
+      };
+
+      if (this.tipoConteudoDetalhamento === "filmes") {
+        this.$store.dispatch('inserirFilmeFavorito', titulo);
+      } else {
+        this.$store.dispatch('inserirTvFavorito', titulo);
+      }
+    },
+    async removerListaFavoritosVuex() {
+      const titulo = {
+        id: this.titulo.id,
+        nome: this.titulo.title || this.titulo.original_name,
+      };
+
+      if (this.tipoConteudoDetalhamento === "filmes") {
+        this.$store.dispatch('removerFilmeFavorito', titulo);
+      } else {
+        this.$store.dispatch('removerTvFavorito', titulo);
+      }
+    },
+    verificarFavorito() {
+      for (let favorito of this.favoritos) {
+        if (this.titulo.id === favorito.id) {
+          this.favorito = true;
+          break;
+        }
+      }
+    },
+    fecharAlerta() {
+      if (this.erro) {
+        this.erro = false;
+      }
+
+      if (this.sucesso) {
+        this.sucesso = false;
+      }
+    }
   },
   computed: {
     formatarDataLancamento() {
@@ -117,18 +192,35 @@ export default {
     possuiElenco() {
       return this.titulo.credits.cast.length > 0;
     },
-    tipoConteudo() {
-      return this.$store.getters.tipoConteudo;
+    tipoConteudoDetalhamento() {
+      return this.$store.getters.tipoConteudoDetalhamento;
+    },
+    favoritos() {
+      if (this.tipoConteudoDetalhamento === "filmes") {
+        return this.$store.getters.listaFilmesFavoritos;
+      } else {
+        return this.$store.getters.listaTvFavoritos;
+      }
     },
   },
   async mounted() {
-    await this.inserirTitulo(this.$route.params.id, this.tipoConteudo);
+    await this.inserirTitulo(this.$route.params.id, this.tipoConteudoDetalhamento);
+
+    console.log(this.favoritos)
+
+    this.verificarFavorito();
   }
 }
 </script>
 
 <template>
   <section id="detalhamento" class="d-flex flex-column justify-center">
+    <MensagemAlerta @click="fecharAlerta" v-if="erro" title=""
+      text="Não foi possível fazer essa atualização na lista de favoritos!" type="error" />
+
+    <MensagemAlerta @click="fecharAlerta" v-if="sucesso" title=""
+      text="Lista atualizada com sucesso!" type="success" />
+
     <div class="d-flex flex-column mt-15" v-if="dadosCarregados">
       <div id="container-informacoes-titulo" class="ajustar-background" :class="{ 'cor-background': !possuiBackground }"
         :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
@@ -165,12 +257,22 @@ export default {
               </div>
             </div>
           </div>
+
+          <v-btn v-if="favorito" @click="desfavoritarTitulo"
+            class="d-flex justify-center align-center align-self-start texto-branco" density="comfortable"
+            icon="mdi-heart" size="large" color="amber">
+          </v-btn>
+
+          <v-btn v-if="!favorito" @click="favoritarTitulo"
+            class="d-flex justify-center align-center align-self-start texto-branco" density="comfortable"
+            icon="mdi-heart-outline" size="large" color="amber">
+          </v-btn>
         </div>
       </div>
 
       <div v-if="possuiElenco" class="rounded-md">
         <h3 class="mb-3">Elenco principal</h3>
-        <div id="elenco" class="d-flex justify-start">
+        <div id="elenco" class="d-flex justify-start gap">
           <MiniaturaElenco v-for="membroElenco in filtrarElenco" :key="membroElenco.id" :nome="membroElenco.name"
             :papel="membroElenco.character" :url="membroElenco.profile_path" />
         </div>
@@ -222,14 +324,15 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 50px;
   min-width: 100%;
   width: 100% !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   #informacoes-titulo {
     flex-direction: row;
+    padding: 0px 50px;
   }
 }
 
@@ -268,7 +371,7 @@ export default {
 #elenco {
   width: 100%;
   padding: 20px 0;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .cor-background {

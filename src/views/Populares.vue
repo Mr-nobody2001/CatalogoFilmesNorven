@@ -1,12 +1,12 @@
 <script>
 import Carrossel from "@/components/carrossel/Carrossel.vue";
-import {pesquisarTitulosPopulares} from "@/service/TmdbService.js";
+import { pesquisarTitulosPopulares } from "@/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import IndicadorNota from "@/components/indicadores/nota/IndicadorNota.vue";
 
 export default {
   name: "Populares",
-  components: {IndicadorNota, IndicadorCarregamento, Carrossel},
+  components: { IndicadorNota, IndicadorCarregamento, Carrossel },
   data() {
     return {
       titulos: null,
@@ -32,7 +32,9 @@ export default {
       this.sliding = true;
     },
     acessarDetalhamento() {
-      this.$router.push({name: 'detalhamento', params: {id: this.tituloSelecionado.id}});
+      this.$store.dispatch('atualizarTipoConteudoDetalhamento', this.tipoConteudo);
+
+      this.$router.push({ name: 'detalhamento', params: { id: this.tituloSelecionado.id } });
     }
   },
   computed: {
@@ -85,8 +87,8 @@ export default {
   <section id="populares" class="d-flex flex-column justify-center mt-5 h-auto">
     <div class="d-flex flex-column justify-space-between" v-if="dadosCarregados">
       <div id="container-informacoes-titulo" class="ajustar-background animate__animated"
-           :class="{ 'animate__fadeOut': sliding, 'animate__fadeInRight': !sliding }"
-           :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
+        :class="{ 'animate__fadeOut': sliding, 'animate__fadeInRight': !sliding }"
+        :style="{ backgroundImage: `url(${prepararUrlBackground})` }">
 
         <div id="informacoes-titulo">
           <div id="logo-titulo">
@@ -99,7 +101,7 @@ export default {
             </div>
 
             <div class="d-flex flex-row align-center gap">
-              <IndicadorNota :nota="tituloSelecionado.vote_average"/>
+              <IndicadorNota :nota="tituloSelecionado.vote_average" />
               <p>Avaliação <br> dos <br> usuários</p>
             </div>
 
@@ -109,12 +111,8 @@ export default {
             </div>
 
             <div class="d-flex gap">
-              <v-btn class="texto-branco"
-                     size="large"
-                     color="amber"
-                     density="default"
-                     rounded="xl"
-                     @click="acessarDetalhamento">Detalhes
+              <v-btn class="texto-branco" size="large" color="amber" density="default" rounded="xl"
+                @click="acessarDetalhamento">Detalhes
               </v-btn>
             </div>
           </div>
@@ -122,15 +120,13 @@ export default {
       </div>
 
       <div class="h-100">
-        <Carrossel @alertar-inicio-troca="startSlideHandle"
-                   @alertar-fim-troca="trocarInformacoesTitulo"
-                   :titulos="titulos"
-        />
+        <Carrossel @alertar-inicio-troca="startSlideHandle" @alertar-fim-troca="trocarInformacoesTitulo"
+          :titulos="titulos" />
       </div>
     </div>
 
     <div id="indicador-carregamento" v-else>
-      <IndicadorCarregamento/>
+      <IndicadorCarregamento />
     </div>
   </section>
 </template>
@@ -165,7 +161,7 @@ body::-webkit-scrollbar {
   padding: 0 40px;
   backdrop-filter: blur(5px) grayscale(1) brightness(0.3);
   background: linear-gradient(to right, var(--preto), transparent, transparent, var(--preto)),
-  linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
+    linear-gradient(to bottom, var(--preto), transparent, transparent, var(--preto));
 }
 
 #logo-titulo {
@@ -173,7 +169,7 @@ body::-webkit-scrollbar {
   max-height: 450px;
 }
 
-#logo-titulo > img {
+#logo-titulo>img {
   width: 100%;
   height: 100%;
 }
@@ -226,5 +222,6 @@ body::-webkit-scrollbar {
 
 .texto-branco {
   color: var(--branco) !important;
+  font-weight: bolder;
 }
 </style>

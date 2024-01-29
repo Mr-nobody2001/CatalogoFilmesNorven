@@ -10,7 +10,7 @@ export default {
 </script>
 
 <template>
-  <v-alert
+  <v-alert id="alerta"
       density="compact"
       :type
       :title
@@ -20,4 +20,10 @@ export default {
 </template>
 
 <style scoped>
+#alerta {
+  position: absolute;
+  top: 100px;
+  right: 100px;
+  z-index: 1;
+}
 </style>

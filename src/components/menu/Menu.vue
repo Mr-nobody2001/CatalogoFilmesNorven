@@ -21,10 +21,18 @@ export default {
         this.$router.push({ name: "inicio" });
       }
     },
+    acessarFavoritos() {
+      if (this.$route.name !== "favoritos") {
+        this.$router.push({ name: "favoritos" });
+      }
+    }
   },
   computed: {
     paginaDetalhamento() {
       return this.$route.name === "detalhamento";
+    },
+    paginaFavoritos() {
+      return this.$route.name === "favoritos";
     }
   },
 }
@@ -43,7 +51,9 @@ export default {
       </div>
     </div>
 
-    <BarraPesquisa />
+    <BarraPesquisa v-if="!paginaFavoritos"/>
+
+    <i v-if="!paginaFavoritos" @click="acessarFavoritos" id="favoritos" class="bi bi-heart-fill"></i>
   </div>
 </template>
 
@@ -69,7 +79,16 @@ export default {
   gap: 10px;
 }
 
+#favoritos {
+  margin-left: 20px;
+  font-size: 1.5rem;
+}
+
+#favoritos:hover {
+  cursor: pointer;
+}
+
 .gap {
-  gap: 100px
+  gap: 80px
 }
 </style>

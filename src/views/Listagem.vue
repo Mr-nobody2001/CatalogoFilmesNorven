@@ -1,14 +1,13 @@
 <script>
 import MiniaturaTitulo from "@/components/cards/MiniaturaTitulo.vue";
 import Paginacao from "@/components/paginacao/Paginacao.vue";
-import {pesquisarPorTitulo, pesquisarTitulosPopulares} from "@/service/TmdbService.js";
+import { pesquisarPorTitulo, pesquisarTitulosPopulares } from "@/service/TmdbService.js";
 import IndicadorCarregamento from "@/components/indicadores/carregamento/IndicadorCarregamento.vue";
 import BarraPesquisa from "@/components/input/BarraPesquisa.vue";
-import MensagemAlerta from "@/components/alertas/MensagemAlerta.vue";
 
 export default {
-  name: "Pesquisa",
-  components: {IndicadorCarregamento, Paginacao, MiniaturaTitulo, BarraPesquisa, MensagemAlerta},
+  name: "Listagem",
+  components: { IndicadorCarregamento, Paginacao, MiniaturaTitulo, BarraPesquisa },
   data() {
     return {
       pagina: 1,
@@ -52,34 +51,27 @@ export default {
   },
   methods: {
     async obterTitulosPorNome(titulo, tipoConteudo, pagina) {
-      try {
-        this.titulos = [];
-        this.gridCarregada = false;
 
-        const resposta = await pesquisarPorTitulo(titulo, tipoConteudo, pagina);
+      this.titulos = [];
+      this.gridCarregada = false;
 
-        this.titulos = resposta.results;
-        this.quantidadePaginas = resposta.total_pages;
-        this.pagina = pagina;
-        this.gridCarregada = true;
-      } catch (error) {
-        console.error('Erro ao obter títulos: ', error.message);
-      }
+      const resposta = await pesquisarPorTitulo(titulo, tipoConteudo, pagina);
+
+      this.titulos = resposta.results;
+      this.quantidadePaginas = resposta.total_pages;
+      this.pagina = pagina;
+      this.gridCarregada = true;
     },
     async obterTitulosPopulares(tipoConteudo) {
-      try {
-        this.titulos = [];
-        this.gridCarregada = false;
+      this.titulos = [];
+      this.gridCarregada = false;
 
-        const resposta = await pesquisarTitulosPopulares(tipoConteudo);
+      const resposta = await pesquisarTitulosPopulares(tipoConteudo);
 
-        this.titulos = resposta.results;
-        this.quantidadePaginas = 1;
-        this.pagina = 1;
-        this.gridCarregada = true;
-      } catch (error) {
-        console.error('Erro ao obter títulos populares: ', error.message);
-      }
+      this.titulos = resposta.results;
+      this.quantidadePaginas = 1;
+      this.pagina = 1;
+      this.gridCarregada = true;
     },
     trocarPagina(pagina) {
       this.obterTitulosPorNome(this.pesquisa, this.tipoConteudo, pagina)
@@ -91,7 +83,9 @@ export default {
       this.obterTitulosPorNome(pesquisa, tipoConteudo, 1);
     },
     acessarDetalhamento(id) {
-      this.$router.push({name: 'detalhamento', params: {id: id}});
+      this.$store.dispatch('atualizarTipoConteudoDetalhamento', this.tipoConteudo);
+
+      this.$router.push({ name: 'detalhamento', params: { id: id } });
     },
   },
   mounted() {
@@ -110,30 +104,27 @@ export default {
   <section id="pesquisa">
     <div v-show="paginaCarregada" class="d-flex flex-column mt-10">
       <div v-show="gridCarregada" id="grid-pesquisa">
-        <MiniaturaTitulo v-for="filme in titulos"
-                         :key="filme.id"
-                         :url="filme.poster_path"
-                         :titulo="filme.title || filme.original_name"
-                         @click="acessarDetalhamento(filme.id)"/>
+        <MiniaturaTitulo v-for="filme in titulos" :key="filme.id" :url="filme.poster_path"
+          :titulo="filme.title || filme.original_name" @click="acessarDetalhamento(filme.id)" />
       </div>
 
       <div v-if="gridCarregada && !numeroTitulosPositivo" id="mensagem"
-           class="d-flex flex-column align-center centralizar">
+        class="d-flex flex-column align-center centralizar">
         <i class="bi bi-database-slash"></i>
-        <p>Nenhum filme encontrado.</p>
+        <p>Nenhum título encontrado.</p>
       </div>
 
       <div v-show="gridCarregada && numeroTitulosPositivo">
-        <Paginacao @trocar-pagina="trocarPagina" :pageProp="pagina" :length="quantidadePaginas"/>
+        <Paginacao @trocar-pagina="trocarPagina" :pageProp="pagina" :length="quantidadePaginas" />
       </div>
 
       <div v-if="!gridCarregada && !numeroTitulosPositivo" class="centralizar">
-        <IndicadorCarregamento/>
+        <IndicadorCarregamento />
       </div>
     </div>
 
     <div v-if="!paginaCarregada" class="centralizar">
-      <IndicadorCarregamento/>
+      <IndicadorCarregamento />
     </div>
   </section>
 </template>
@@ -144,7 +135,7 @@ export default {
   height: auto;
 }
 
-#pesquisa > div {
+#pesquisa>div {
   height: 100%;
 }
 
@@ -157,16 +148,16 @@ export default {
   width: auto !important;
 }
 
-#mensagem > p,
-#mensagem > i {
+#mensagem>p,
+#mensagem>i {
   color: var(--branco);
 }
 
-#mensagem > i {
+#mensagem>i {
   font-size: 4rem;
 }
 
-#mensagem > p {
+#mensagem>p {
   font-size: 1.4rem;
 }
 
